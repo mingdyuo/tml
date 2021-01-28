@@ -1,3 +1,5 @@
 # Let-me-be-a-BE-engineer
 
-### Repository only for [github projects](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/projects)
+### 📌 Purpose 1: Manage my plans through [github projects](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/projects)
+
+### 📌 Purpose 2: Archive backend-related documents
