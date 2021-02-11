@@ -266,3 +266,188 @@
 
 ![image](https://user-images.githubusercontent.com/41130448/107183524-4bea2300-6a22-11eb-941f-d41afeb2e140.png)
 
+<br>
+
+### SQL 함수
+
+- DBMS의 함수 
+
+  [정의 주체에 따른 분류]
+
+  1. 내장 함수
+
+     RDBMS에 내장되어 있는 함수
+
+  2. 사용자 정의 함수
+
+     내장함수를 제외하고 `create function`문을 사용해서 필요한 변환 규칙을 적용해 사용자가 직접 만든 함수
+
+  [실행에 따른 분류]
+
+  1. 단일행 함수
+
+     한 행 값을 받아서 특정 규칙과 정의를 통해 변환시키는 함수
+
+  2. 복수행 함수
+
+     여러 행의 값을 한꺼번에 받아서 하나의 행의 결과 값으로 되돌려주는 함수
+
+     예) count()
+
+  [기능에 따른 분류]
+
+  1. 문자 함수
+  2. 숫자 함수
+  3. 날짜 함수
+  4. 형 변환 함수
+  5. 일반 함수
+
+<br>
+
+### 내장, 단일행, 문자 함수를 보자
+
+1. `lower( )`, `upper( )`
+
+   소문자, 대문자로 출력
+
+2. `length( )`
+
+   데이터의 길이
+
+3. `concat( )`
+
+   mysql에서 문자열이나 컬럼 값을 출력하는 방법
+
+   오라클에서는 `||`연산자로 이어붙일 수 있음
+
+4. `substr( )`, `mid( )`, `substring( )`
+
+   셋 다 똑같은 기능이다. `substr([컬럼명], [시작할 문자열의 위치 값], [리턴시킬 값의 길이])`와 같이 사용
+
+   시작할 문자열의 인덱스는 0이 아니라 1부터 시작한당,,ㅎㅎ
+
+   리턴시킬 값의 길이가 시작한 위치부터 끝까지의 길이보다 짧으면 끝까지만 리턴한다.
+
+   ```sql
+   select continent as 원본, substr(continent, 2, 2) as substr
+   from test.country;
+   ```
+
+5. `instr( )`
+
+   특정 문자열의 위치를 숫자로 리턴. `instr([컬럼명], '찾는 문자')`로 사용
+
+   찾는 문자가 없으면 0이 나온다. 여러 개 있으면 가장 앞에 있는 찾는 문자가 나온다.
+   
+   *대소문자 구분을 하지 않는다!*
+
+   ```sql
+   select continent as 원본, instr(continent,'A') as instr from test.country;
+   ```
+   
+6. `lpad( )`, `rpad( )`
+
+   데이터가 어떤 기준보다 짧을 경우에 왼쪽이나 오른쪽으로 기준만큼 자릿수를 채워준다.
+
+   `lpad([컬럼명], [기준 자릿수], [채워넣을 숫자 혹은 문자])`로 사용
+
+   ```sql
+   select lpad(continent, 7, 'X') as lpad, rpad(continent, 9, 'O') as rpad
+   from test.country;
+   ```
+
+7. `trim( )`, `ltrim( )`, `rtrim( )`
+
+   문자열의 양쪽, 왼쪽, 오른쪽의 공백을 없애는 함수
+
+   `trim([컬럼 명])`으로 사용한다.
+
+   ```sql
+   select capital_city as 원본, trim(capital_city) as trim, ltrim(capital_city) as ltrim
+   from test.country;
+   ```
+
+8. `replace( )`
+
+   특정 문자열을 찾아서 다른 문자열로 치환하는 함수
+
+   `replace([컬럼 명], '찾을 문자', '치환할 문자')`와 같이 사용
+
+   *대소문자를 구분한다.*
+
+   ```sql
+   select replace(capital_city, 'a', '@') as 'replace'
+   from test.country;
+   ```
+
+<br>
+
+### 내장, 단일행, 숫자 함수를 보자
+
+1. `round( )`
+
+   숫자를 **반올림** 후 출력하는 함수
+
+   옵션을 통해 반올림 자릿수 설정 가능
+
+   `round([숫자], [소수점 아래 자릿수])`와 같이 사용
+
+   ```sql
+   select round(112.3456,1),round(112.3456,2),round(112.3456,-1) from dual;
+   ```
+
+2. `truncate( )`
+
+   `round( )`와 사용법이 같다.
+
+   입력된 값을 옵션에 따라 지정된 위치에서 **버리고** 결과를 출력한다.
+
+   오라클에서는 `trunc( )`함수로 사용
+
+   ```sql
+   select truncate(112.3456,1),truncate(112.3456,2),truncate(112.3456,-1) from dual;
+   ```
+
+3. `mod( )`
+
+   나머지를 출력하는 함수
+
+   `mod([나눌 값], [몫])`와 같이 사용한다.
+
+   ```sql
+   select mod(26,3),mod(10,9),mod(4,2) from dual;
+   ```
+
+4. `ceil( )`
+
+   입력된 숫자보다 크면서, 가장 가까운 정수를 출력
+
+   ```sql
+   select ceil(12.6),ceil(11.5),ceil(16.3) from dual;
+   ```
+
+5. `floor( )`
+
+   입력된 숫자보다 작으면서, 가장 가까운 정수를 출력
+
+   ```sql
+   select floor(12.6), floor(11.5), floor(16.3) from dual;
+   ```
+
+6. `power( )`
+
+   제곱하는 함수
+
+   ```sql
+   select power(1,2),power(2,3),power(3,5) from dual;
+   ```
+
+<br>
+
+![image](https://user-images.githubusercontent.com/41130448/107464338-6c8db680-6ba3-11eb-9b58-96b0180f6bf4.png)
+
+![image](https://user-images.githubusercontent.com/41130448/107464720-3997f280-6ba4-11eb-9588-e978db50d755.png)
+
+<br>
+
+왤케 재미가 없지...
