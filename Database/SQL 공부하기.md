@@ -448,6 +448,312 @@
 
 ![image](https://user-images.githubusercontent.com/41130448/107464720-3997f280-6ba4-11eb-9588-e978db50d755.png)
 
+<br>아 개재미없다...
+
+### 내장, 단일행, 날짜 함수
+
+1. 지금 현재의 날짜, 시간 출력하기
+
+   - 사용할 수 있는 SQL 명령이 여러가지가 있다.
+
+     | SQL                           | 결과                  |
+     | ----------------------------- | --------------------- |
+     | `select now();`               | `2021-02-14 15:02:23` |
+     | `select sysdate();`           | `2021-02-14 15:02:38` |
+     | `select current_timestamp();` | `2021-02-14 15:02:48` |
+     | `select curdate();`           | `2021-02-14`          |
+     | `select current_date();`      | `2021-02-14`          |
+     | `select current_time();`      | `15:03:33`            |
+
+   - `+0`이라는 연산을 추가하면 형식을 빼고, 숫자를 나열한 형태로 출력할 수 있다.
+
+     | SQL                        | 결과             |
+     | -------------------------- | ---------------- |
+     | `select now() + 0;`        | `20210214150359` |
+     | `select current_time()+0;` | `150415`         |
+
+2. 날짜, 시간에 따른 특정 정보 출력하기
+
+   | SQL                                         | 결과     | 설명                          |
+   | ------------------------------------------- | -------- | ----------------------------- |
+   | `select dayofweek('2021-02-14 15:02:48');`  | 1        | 1:일요일, 2:월요일...7:토요일 |
+   | `select weekday('2021-02-14 15:02:48');`    | 6        | 0:월요일, 1:화요일...6:일요일 |
+   | `select dayofmonth('2021-02-14 15:02:48');` | 14       | 일자를 출력                   |
+   | `select dayofyear('2021-02-14 15:02:48');`  | 45       | 한해의 몇번째 날인지 출력     |
+   | `select month('2021-02-14 15:02:48');`      | 2        | 월을 출력                     |
+   | `select dayname('2021-02-14 15:02:48');`    | Sunday   | 요일을 영문으로 출력          |
+   | `select monthname('2021-02-14 15:02:48');`  | February | 월을 영문으로 출력            |
+   | `select quarter('2021-02-14 15:02:48');`    | 1        | 분기를 출력 (1분기~4분기)     |
+   | `select week('2021-02-14 15:02:48');`       | 7        | 한해의 몇번째 주인지 출력     |
+   | `select year('2021-02-14 15:02:48');`       | 2021     | 년도를 출력                   |
+   | `select hour('2021-02-14 15:02:48');`       | 15       | 시간을 출력                   |
+   | `select minute('2021-02-14 15:02:48');`     | 2        | 분을 출력                     |
+
+3. 날짜, 시간을 연산하여 출력하기
+
+   `date_add([날짜], interval [더할 값] [더할 값의 날짜 단위])`
+
+   `date_sub([날짜], interval [더할 값] [더할 값의 날짜 단위])`
+
+   `adddate([날짜], interval [더할 값] [더할 값의 날짜 단위])`
+
+   `subdate([날짜], interval [더할 값] [더할 값의 날짜 단위])`
+
+   - 날짜 단위
+
+     | type변수 (날짜 단위)                             | 입력 형태                  |
+     | ------------------------------------------------ | -------------------------- |
+     | second, minute, hour, day, month, year           | 초, 분, 시, 일, 월 년      |
+     | minute_second, hour_minute, day_hour, year_month | 분:초, 시:분, 일 시, 년 월 |
+     | hour_second, day_minute                          | 시:분:초, 일 시:분         |
+     | day_second                                       | 일 시:분:초                |
+
+4. 시간과 초 데이터 변환하여 출력하기
+
+   `select sec_to_time(3000);`
+
+   `select time_to_sec('20:21:20');`
+
+5. 년월에 데이터에 개월을 더해서 출력하기
+
+   YYMM 형태 : `select period_add(2001, 15);` : 2020년 01월 + 15월
+
+   YYYYMM 형태 : `select period_add(202001, 15);` : 2020년 01월 + 15월
+
+6. 파라미터를 조정하여 데이터를 변경하여 출력하기
+
+   `select date_format('date', 'format');`과 같이 사용
+
+   ```sql
+   select date_format('2021-02-02 11:11:11', '%p');
+   select date_format('2021-02-02 11:11:11', '%w');
+   select date_format('2021-02-02 11:11:11', '%u')
+   ```
+
+   | format | 출력 형태                                                    |
+   | ------ | ------------------------------------------------------------ |
+   | %W     | 요일 (Monday....Sunday)                                      |
+   | %D     | 일자 (1st, 2nd.....)                                         |
+   | %Y     | 년도 (YYYY)                                                  |
+   | %y     | 년도 (YY)                                                    |
+   | %a     | 요일 영문 약어 (Sun, Mon..)                                  |
+   | %d     | 일자 (01..02..31)                                            |
+   | %e     | 일자 (1..2..31)                                              |
+   | %m     | 월 (01..02..12)                                              |
+   | %c     | 월 (1..2..12)                                                |
+   | %b     | 월 (Jan...Dec)                                               |
+   | %j     | 해당년에서 몇번째 날인지 (1...366)                           |
+   | %H     | 시 (00..01..02..23)                                          |
+   | %k     | 시 (0..1..2..23)                                             |
+   | %h     | 시 (01..02..12)                                              |
+   | %l     | 시 (1..2..12)                                                |
+   | %i     | 분 (01..02..59)                                              |
+   | %r     | 시각(12) (hh:mm:ss [A/P])                                    |
+   | %T     | 시각(24) (hh:mm:ss)                                          |
+   | %S,s   | 초 (00..01..59)                                              |
+   | %p     | 오전/오후 (A/P)                                              |
+   | %w     | 해당 요일중 몇번째 날인지 (0:일요일, 1:월요일.....6:토요일)  |
+   | %U,u   | 해당년에서 몇번째 주 인지 (U:일요일이 주의 시작, u:월요일이 주의 시작) |
+
 <br>
 
-왤케 재미가 없지...
+### MySQL의 데이터 타입과 형변환
+
+- Database에 데이터를 저장할 때에는 그냥 text 형태로 넣을 수도 있지만, 각 컬럼에 대해 데이터 형을 정의하고 형태에 맞도록 넣어 관리한다. 
+- 이는 데이터의 정합성을 지키고 관리를 수월하게 하기 위함이다.
+- 그러나 데이터를 조작할 때에 형태를 변환해서 사용해야 하는 경우가 생긴다.
+
+1. 데이터 타입
+
+   - 문자형 데이터 타입
+
+     CHAR, VARCHAR, TINYTEXT, TEXT, MEDIUMTEXT, LONGTEXT, ENUM, SET
+
+   - 숫자형 데이터 타입
+
+     BIT, (BOOL, BOOLEAN, TINYINT(1)), TINYINT, SMALLINT, MEDIUMINT, INT, BIGINT, FLOAT, (DOUBLE, DOUBLE PRECISION, REAL), FLOAT, DECIMAL, (DEC, NUMERIC, FIXED)
+
+   - 날짜형 데이터 타입
+
+     DATE, TIME, DATETIME, TIMESTAMP, YEAR
+
+   - 이진형 데이터 타입
+
+     BINARY, VARBINARY, TINYBLOB, BLOB, MEDIUMBLOB, LONGBLOB
+
+2. 묵시적 형 변환
+
+   - 사용자가 의도한 것에 따라 db가 알아서 변환하여 출락하는 것
+
+     ```sql
+     SELECT 100 + 200 FROM DUAL;
+     SELECT '100' + '200' FROM DUAL; # 답은 300으로 출력됨
+     
+     SELECT CONCAT(82, '는 대한민국 국가 식별 전화번호') FROM DUAL; # 숫자를 문자열로 바꿔줌
+     ```
+
+3. 형 변환 함수 사용하기
+
+   ```sql
+   CAST(표현할 값 AS 데이터형식[길이]);
+   CONVERT(표현할 값 AS 데이터형식[길이]);
+   ```
+
+<br>
+
+![image](https://user-images.githubusercontent.com/41130448/107871644-e34deb00-6ee6-11eb-8a51-510581caee9a.png)
+
+### 일반 함수
+
+1. `ifnull`
+
+   - `ifnull(data, [null 대신 넣을 값 혹은 컬럼명])`와 같이 사용
+
+   - 오라클에서 NVL함수와 같은 기능이다
+   - null인 데이터 값이 있을 때 null으로 출력하지 않도 지정하는 다른 특정 값으로 출력하게 한다.
+   - null은 아무 것도 없는 것을 의미한다. inner join을 해도 null끼리는 연결되지 않는다.
+
+   ```sql
+   select name, dept, salary, ifnull(bonus, 0) from class.salary;
+   select name, dept, salary, ifnull(bonus, name) from class.salary;
+   ```
+
+2. `if`
+
+   - `if([조건], [조건 성립 시 출력할 내용], [조건 미성립시 출력할 내용])`와 같이 사용
+
+   ```sql
+   select name, dept, salary, if(bonus is null, '해당없음', bonus) from class.salary;
+   select name, dept, salary, if(salary >= 300, '고액연봉자', '일반연봉자') from class.salary;
+   ```
+
+3. `case`
+
+   - 오라클과 비슷하다
+   - 특정 값의 여러 경우를 고려해서 출력
+
+   ```sql
+   select name
+   	, case  when dept = 'A' then '경영지원부'
+   			when dept = 'B' then '영업부'
+   			else '회계팀' end as dept
+   	, salary
+   	, bonus
+   from class.salary;
+   # 위와 같이 써도 되지만 아래가 좀 더 명확하다.
+   select name
+   	, case  when dept = 'A' then '경영지원부'
+   			when dept = 'B' then '영업부'
+   			when dept = 'C' then '회계팀' end as dept
+   	, salary
+   	, bonus
+   from class.salary;
+   ```
+
+4. 복합적으로 사용하기
+
+   ```sql
+   select name
+   	, case  when dept = 'A' then '경영지원부'
+   			when dept = 'B' then '영업부'
+   			when dept = 'C' then '회계팀' end as dept
+   	, salary
+   	, if(salary >= 300, '고액연봉', '일반') as salary_type
+   	, ifnull(bonus, 0)
+   	, case  when ifnull(bonus, 0) = 0 then '해당없음'
+   			else '보너스 해당자' end as bonus_type
+   from class.salary;
+   ```
+
+<br>
+
+### 복수 행 함수
+
+- window 함수, 그룹 함수라고도 한다.
+
+- 한번에 여러 데이터에 대한 결과를 출력한다.
+
+- 복수 행 함수에 컬럼 명을 넣었을 때 해당 컬럼에 null 값이 있다면 이것을 제외하고 결과가 나오므로 주의해야 한다.
+
+  예를 들면 5개의 row가 있는데, 어떤 컬럼의 평균을 구하려고 한다. 그런데 이 중에 null값이 있다면 이들을 제외하고 구한다. 따라서 아래와 같이 null 값을 미리 처리하고 계산해야 한다.
+
+  ```sql
+  select avg(ifnull(bonus, 0)) from class.salary;
+  ```
+
+1. `count`
+
+   - 입력되는 데이터의 총 건수를 반환한다.
+   - `*`를 넣어서 사용할 수 있는데, 이 경우 전체 컬럼을 대상으로 총 건수를 계산한다.
+   - 특정 칼럼명을 넣는다면 해당 칼럼에서 null 값을 제외하고 데이터 건수를 반환한다.
+
+   ```sql
+   select count(*) from class.salary;
+   ```
+
+2. `sum`
+
+   - 입력된 데이터들의 합계 값을 구해서 반환
+
+   ```sql
+   select sum(salary) from class.salary;
+   ```
+
+3. `max`, `min`
+
+   - 최댓값과 최솟값을 구함
+
+   ```sql
+   select max(salary), min(salary) from class.salary;
+   ```
+
+4. `stddev`
+
+   - 표준 편차를 구하는 함수
+
+   ```sql
+   select stddev(salary) from class.salary;
+   ```
+
+5. `variance`
+
+   - 분산을 구하는 함수
+
+   ```sql
+   select variance(salary) from class.salary;
+   ```
+
+<br>
+
+### GROUP BY 사용하기
+
+1. 평균 및 합계 구하기
+
+   ```sql
+   select do, avg(budget_value) as 예산평균, sum(budget_value) as 예산합계
+   from class.budet
+   group by do;
+   ```
+
+   `do`가 동일한 것끼리 budget_value의 합과 평균을 구하기
+
+2. 주의할 점
+
+   - 컬럼 명을 그대로 쓸 수 있지만, 함수를 이용해야 할 수도 있다. 이 때는 select 절에도 group by 절에서 쓴 함수를 그대로 써줘야 정상적으로 작동한다.
+
+   ```sql
+   # grouping을 잘못 한 경우 (컬럼 값이 원하지 않는 방식으로 나온다)
+   
+   select do, avg(budget_value) as 예산평균, sum(budget_value) as 예산합계
+   from class.budget
+   group by if(do in ('서울특별시', '경기도'), '수도권', '지방');
+   
+   # select 절을 group by 절과 같도록 작성한 경우
+   
+   select if(do in ('서울특별시', '경기도'), '수도권', '지방') as 지역구분, avg(budget_value) as 예산평균, sum(budget_value) as 예산합계
+   from class.budget
+   group by if(do in ('서울특별시', '경기도'), '수도권', '지방');
+   ```
+
+   
+
