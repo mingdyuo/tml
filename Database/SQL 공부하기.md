@@ -755,5 +755,197 @@
    group by if(do in ('서울특별시', '경기도'), '수도권', '지방');
    ```
 
-   
 
+<br>
+
+### Join하기
+
+- 관계형 데이터베이스는 테이블이나 스키마들이 서로 관계를 가지고 있다. 이런 관계를 이용해서 SQL을 작성할 수 있는데 이 때 join을 사용한다.
+
+- 여러 테이블이나 스키마에 분산되어 있는 데이터를 하나의 view로 출력하는 것이다.
+
+- Join은 여러 가지 방법이 존재하는데, 각 방법의 특징을 알고 있어야 한다.
+
+- Join의 종류를 살펴보자
+
+  1. 카티션 곱 join
+
+     - 테이블들을 join할 때 join 조건을 기술하지 않고 하는 join
+
+     - 결과는 두 테이블의 row 개수를 곱한 만큼 나온다.
+     - 업무에서 흔히 사용되지는 않음
+     - 데이터를 많이 불려야 하거나, 특정한 조건 안에서 사용한다.
+2. Equi join (Inner join)
+  
+   - 양쪽 테이블의 어떤 칼럼에 같은 값이 존재할 때 equal 연산자를 이용하여 양쪽에 다 존재하는 값만 결과로 출력
+     - 가장 보편적인 join 방식
+  3. Non Equi join
+
+     - Equi join과 반대 개념
+   - 두 테이블을 join할 때 서로 다른 값을 가지거나, 한쪽 데이터가 다른 쪽 테이블의 데이터 범위 내에 있는 것만 출력을 원할때 사용
+     - inner join에 속한다
+  4. Outer join
+  
+   - left outer join, right outer join, full outer join으로 구분됨
+     - left, right join의 경우 어느 한쪽의 데이터를 모두 출력한 뒤 조건에 맞는 데이터만 다른 쪽에 출력
+   - 조건이 맞지 않는 경우 null 값을 표시
+  5. Self join
+     - 자기 자신과 join하는 경우
+     - 일반적으로 사용하지는 않음
+   - 그러나 꼭 필요한 경우가 있다고 함
+
+<br>
+
+### 카티션 곱 join (Cartesian product)
+
+- where절이나 on 절에 join 조건을 주지 않고 join을 수행
+
+- cross join이라고도 한다.
+
+- 사실 이 연산은 RDBMS의 개념과 상충하는 개념이 된다. 키를 이용해서 다른 테이블과 관계를 맺는 것이 아니라, 그냥 모든 데이터를 1:1로 연결하기 때문이다.
+
+- 그래도 이 연산이 필요한 경우
+
+  1. 데이터를 대량으로 복제해야 할 때
+  2. 특정 데이터 튜플만 복제되어야 할 때
+  3. 연결고리가 없는 두 테이블의 데이터를 무작위로 합쳐야 할 때
+
+- MySql
+
+  `,`를 넣어서 구분
+
+  ```sql
+  select m.major_id, m.major_title, p.prfs_id, p.name 
+  from class.major m, class.professor p;
+  ```
+
+- ansi SQL
+
+  `cross join` 명령어를 사용
+
+  ```sql
+  select m.major_id, m.major_title, p.prfs_id, p.name 
+  from class.major m cross join class.professor p;
+  ```
+
+<br>
+
+### Inner join
+
+- 가장 일반적인 조인
+
+- 보통 특별한 이야기 없이 join이라고 하면 요놈을 말하는 것이다
+
+- 두 테이블 간에 연결되는 키가 있다고 가정하고, 그 키 값이 같은 데이터를 가지고 와서 출력하는 것
+
+- Equi join, join, 등가 조인 모두 같은 표현이다.
+
+- MySQL
+
+  ```sql
+  select p.name as 교수이름, m.major_title as 학과명 
+  from class.professor p , class.major m 
+  where p.bl_major_id = m.major_id;
+  ```
+
+- Ansi SQL
+
+  cross join, join, inner join 모두 사용할 수 있다.
+
+  ```sql
+  # 1
+  select p.name as 교수이름, m.major_title as 학과명 
+  from class.professor p 
+  	join class.major m 
+  		on p.bl_major_id = m.major_id;
+  
+  # 2
+  select p.name as 교수이름, m.major_title as 학과명 
+  from class.professor p 
+  	cross join class.major m 
+  		on p.bl_major_id = m.major_id;
+  
+  # 3 inner join으로 쓰는게 아무래도 제일 보기 명확하다.
+  select p.name as 교수이름, m.major_title as 학과명 
+  from class.professor p 
+  	inner join class.major m 
+  		on p.bl_major_id = m.major_id;
+  ```
+
+- 3개의 테이블을 join하기
+
+  - 키를 연결하는 방법은 다음과 같다.
+
+    ![image](https://user-images.githubusercontent.com/41130448/107904742-fcf73d00-6f8f-11eb-9217-5789d933bbaa.png)
+
+    테이블 1과 2의 공통키를 찾아 연결후 이 결과물이 되는 테이블을 다시 테이블 3과 1:1 조인한다고 생각한다.
+
+  ```sql
+  # MySql
+  select s.name as 학생이름, p.name as 교수이름, m.major_title as 학과명 
+  from class.student s, class.major m, class.professor p 
+  where s.bl_prfs_id = p.prfs_id and p.bl_major_id = m.major_id;
+  
+  # Ansi Sql
+  select s.name as 학생이름, p.name as 교수이름, m.major_title as 학과명 
+  from class.student s 
+  	inner join class.major m 
+  		inner join class.professor p 
+  			on s.bl_prfs_id = p.prfs_id and p.bl_major_id = m.major_id;
+  ```
+
+<br>
+
+### Non equi Join
+
+- 두 테이블을 join할 때 값이 서로 같지는 않지만 join 조건에서 지정한 어느 범위에 일치할 때 서로 데이터를 join해주는 것이다.
+
+- 예를 들어 선물에 5, 10, 15...의 값을 갖는 포인트가 매겨져 있다. 고객이 8포인트를 가지고 있다면 10포인트의 선물은 가져갈 수 없고 5포인트의 선물과 매칭이 되어야 한다. 이런 때에 non equi join을 사용할 수 있다. 각 고객이 받을 수 있는 선물을 non qui join을 이용해서 출력 가능하다.
+
+  between, and를 사용하며 이 조건에 해당하면 조인한다.
+
+  ```sql
+  # MySQL
+  select c.name as 고객명, c.point as 고객_point, g.name as 상품명
+  from class.customer c, class.gift g
+  where c.point between g.point_s and g.point_e;
+  
+  # Ansi SQL
+  select c.name as 고객명, c.point as 고객_point, g.name as 상품명
+  from class.customer c join class.gift g
+  on c.point between g.point_s and g.point_e;
+  ```
+
+<br>
+
+### Outer join
+
+- Inner join 다음으로 많이 사용하는 기법이다.
+
+- 두 테이블에서 일치하는 키 값이 없는 데이터도 함께 출력하는 기법이다.
+
+- 누락 없이 데이터를 모두 보고자 할 때 쓸 수 있다.
+
+- outer join은 모든 데이터를 다 가지고 올 때 full scan을 하기 때문에 DB에 무리가 갈 수 있으므로 꼭 필요할 때만 사용한다.
+
+- left, right, full outer join이 있는데, mysql에서는 full outer join을 지원하지 않는다. 필요 시 union을 사용하면 우회적으로 구현할 수 있다.
+
+  ![image](https://user-images.githubusercontent.com/41130448/107905594-5b251f80-6f92-11eb-990e-102ea03c7afc.png)
+
+  ```sql
+  select * 
+  from A full outer join B 
+  on A.a = B.b; 
+  # 위의 full outer join 연산을 아래의 union all을 통해 구할 수 있음
+  select * 
+  from A left outer join B 
+  on A.a = B.b 
+  union 
+  select * 
+  from B left outer join A 
+  on A.a = B.b;
+  ```
+
+  
+
+15분 더하기
