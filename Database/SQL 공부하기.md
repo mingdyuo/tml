@@ -785,7 +785,7 @@
    - 두 테이블을 join할 때 서로 다른 값을 가지거나, 한쪽 데이터가 다른 쪽 테이블의 데이터 범위 내에 있는 것만 출력을 원할때 사용
      - inner join에 속한다
   4. Outer join
-  
+
    - left outer join, right outer join, full outer join으로 구분됨
      - left, right join의 경우 어느 한쪽의 데이터를 모두 출력한 뒤 조건에 맞는 데이터만 다른 쪽에 출력
    - 조건이 맞지 않는 경우 null 값을 표시
@@ -946,6 +946,277 @@
   on A.a = B.b;
   ```
 
-  
 
-15분 더하기
+<br>
+
+### 서브 쿼리
+
+- SQL 내에서 또 다른 select 절을 사용하는 문법을 의미한다.
+
+  1. 장점
+     - 데이터를 폭넓게 사용할 수 있다.
+     - 복잡한 쿼리를 좀더 단순화 할수 있다.
+  2. 단점
+     - 조인을 이용해서 풀 수 있는데, 서브 쿼리를 이용한다면 성능이 저하할 수 있다.
+     - 꼭 필요한 상황에서만 쓰도록 한다.
+
+- 서브 쿼리의 종류는 select, from, where 중 어느 절에서 사용하느냐에 따라 구분한다.
+
+  1. select 절
+
+     스칼라 서브쿼리 (Scalar subquery)
+
+  2. from 절
+
+     인라인 뷰 (Inline view)
+
+  3. where 절
+
+     중첩 서브쿼리, 서브쿼리
+
+![image](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fp3g69%2FbtqD4VzuaGh%2F3NHLU0z2oOM7kHcHEMs0N1%2Fimg.png)
+
+<br>
+
+### 스칼라 서브쿼리
+
+- select 절에서 사용
+
+- 괄호 사이에 서브쿼리를 넣는다. 
+
+- 쿼리의 결과가 하나의 행으로만 나와야 한다. 두 개 이상의 행이 나오게 된다면 SQL이 실행되지 않는다.
+
+  ```sql
+  # 1
+  SELECT
+  	(SELECT B.NAME
+  	 FROM DEPT B
+  	 WHERE B.DEPT_NO = A.EMP_NO)
+  FROM EMP_NO A;
+  
+  # 2 학생 테이블의 major_id 값을 학과 테이블에서 검색하여 학과명을 출력
+  SELECT NAME as 학생이름,
+  	(SELECT major_title
+       from class.major b
+       where b.major_id = a.major_id) as 학과명
+  FROM class.student a;
+  ```
+
+<br>
+
+### 인라인 뷰
+
+- from 절에 사용됨
+
+- 괄호 사이에 서브쿼리를 넣는다.
+
+- 하나의 테이블이라고 생각할 수 있다. 인라인 뷰를 이용해서 join, where 조건절 등을 사용할 수 있다.
+
+- 메인쿼리에서 서브쿼리의 컬럼을 사용하려면, **서브 쿼리 내의 select로 가져온 컬럼만 사용할 수 있다.**
+
+  (메인 쿼리의 select에서 사용, where에서 조건으로 사용, join시 key로 사용 시)
+
+  ```sql
+  # 1
+  SELECT cs.name, SUM(od.saleprice) "total"
+  FROM (
+  	SELECT custid, name
+  	FROM Customer
+  	WHERE custid <= 2
+  )
+  WHERE cs.custid = od.custid
+  GROUP BY cs.name;
+  
+  # 2
+  SELECT a.name as 학생이름, b.major_title as 학과면
+  FROM class.student a, 
+  	(
+  		SELECT major_title, major_id
+          FROM class.major 
+  	) b
+  WHERE a.major_id = b.major_id;
+  ```
+
+<br>
+
+### 서브 쿼리
+
+- where 절에서 사용
+
+- 쿼리의 결과 행 수에 따라 단일행 서브 쿼리와 복수행 서브 쿼리로 나눌 수 있다.
+
+- where절 내의 비교 연산자 사용 시 주의해야 한다.
+
+  1. 단일 행 결과가 나올 시 사용할 수 있는 비교 연산자
+
+     =, <>, >, >=, <, <=
+
+  2. 복수 행 결과가 나올 시 사용할 수 있는 연산자
+
+     IN(NOT IN), EXIST, NOT EXIST
+
+  ```sql
+  # 단일행 서브쿼리
+  SELECT name as 학생이름
+  FROM class.student
+  WHERE major_id = 
+  	(select major.major_id 
+       from class.major 
+       where major_title='컴퓨터공학과')
+  	
+  # 복수행 서브쿼리
+  SELECT name as 학생이름
+  FROM class.student
+  WHERE major_id in 
+  	(select major.major_id 
+       from class.major 
+       where major_title in ('컴퓨터공학과', '국문학과'))
+  ```
+
+<br>
+
+### 서브쿼리를 join으로 출력하기
+
+- 서브 쿼리보다 join을 사용하는 것이 대부분의 경우 좋은 성능을 갖는다.
+
+  오라클의 경우 스칼라 서브쿼리 캐싱 기능이 있어 nested loop와 전반적으로 비슷하고, 더 빠를 수도 있다.
+
+- 대용량 hash join의 경우 스칼라 서브 쿼리는 조인보다 빠를 수 없다.
+
+  ```sql
+  SELECT a.name as 학생이름, a.major_title as 학과명
+  FROM class.student a, class.major b
+  WHERE a.major_id = b.major_id;
+  ```
+
+<br>
+
+### Insert
+
+- 기존에 없는 새로운 데이터를 database의 테이블에 넣는 명령
+
+- 한번에 하나의 테이블에만 수행 가능
+
+- 문자 형태로 정의된 컬럼은 `'`로 데이터 양쪽을 감싸야 한다.
+
+- 가장 보편적이고 일반적인 방법이다.
+
+  1. 단일 행 입력하기 (컬럼 미지정)
+
+     - insert 대상 테이블의 칼럼을 지정하지 않고 insert하는 방법이다.
+     - 테이블의 컬럼 순서대로 데이터를 넣는다.
+
+     ```sql
+     INSERT into class.insert_test values (1, '이준영', '안양시', '01015881588', now());
+     ```
+
+  2. 단일 행 입력하기 (컬럼 지정)
+
+     - insert 대상 테이블의 칼럼을 지정하고 insert하는 방법이다.
+     - 지정한 컬럼의 순서대로 데이터를 넣는다. 
+     - 컬럼 일부만 데이터를 갖도록 넣을 수 있다. 값을 안쓴 컬럼은 null이 들어간다. 
+
+     ```sql
+     INSERT into class.insert_test (seq, name, place) values (1, '이준영', '안양시');
+     ```
+
+  3. 복수 행 입력하기
+
+     - 하나의 insert문으로 여러 행의 데이터 입력하기
+
+     ```sql
+     INSERT into class.insert_test
+     values  (1, '이준영', '안양시', '01015881588', now()),
+     		(2, '이세화', '안산시', '01015881588', now()),
+     		(3, '엄준식', '서울시', '01015881588', now()),
+     		(4, '이병건', '안산시', '01015881588', now()),
+     ```
+
+  4. insert select문 활용하기
+
+     - select한 결과를 바로 입력하는 것이다.
+
+     ```sql
+     INSERT into class.insert_test SELECT * FROM class.insert_test2;
+     ```
+
+<br>
+
+### Update
+
+- 기존 데이터의 행 수는 변하지 않지만, row 내의 특정 칼럼의 값을 바꾸는 작업
+
+  1. 기본 사용법
+
+     - where 절을 빼고 넣으면 모든 행의 지정한 컬럼 값이 변경된다.
+
+     ```sql
+     UPDATE [테이블명] SET [컬럼명] = [값] WHERE [키 컬럼] = [키 값];
+     # 예시
+     UPDATE class.update_test SET name = '엄준식' WHERE seq = 26;
+     # 비교 연산자 사용
+     UPDATE class.update_test SET name = '진용원' WHERE seq in (11, 12, 13, 14, 15);
+     ```
+
+  2. 2개 이상의 칼럼 값 변경하기
+
+     - SET 부분에 변경할 컬럼을 콤마로 나열해서 작성하면 된다.
+
+     ```sql
+     UPDATE class.update_test SET name = '옥냥이', content = '먼저함' WHERE seq in (11, 12, 13, 14, 15)
+     ```
+
+<br>
+
+### Delete
+
+- 테이블에서 데이터를 삭제할 때 사용
+
+  1. 조건을 넣어서 사용
+
+     ```sql
+     DELETE FROM [테이블명] WHERE [조건문];
+     DELETE FROM class.delete_test WHERE seq = 10;
+     ```
+
+  2. 테이블 내 모든 데이터 삭제
+
+     ```sql
+     DELETE FROM [테이블명];
+     DELETE FROM [테이블명] WHERE 1=1;
+     ```
+
+  3. select의 결과로 삭제
+
+     ```sql
+     DELETE FROM class.delete_test WHERE seq in (select seq from class.delete_test2)
+     ```
+
+<br>
+
+### Merge
+
+- merge문은 오라클에서 부르는 호칭이며, MySql에서는 `insert into on duplicate key`와 같은 방식으로 실행
+
+- 어떤 데이터를 입력할 때, 대상 테이블에 해당 키를 갖는 데이터가 없으면 insert문을 실행하여 입력하고 이미 데이터가 존재하면 update하여 값을 갱신
+
+  ```sql
+  # select문 사용하기
+  INSERT INTO class.insert_test
+  SELECT *
+  FROM class.insert_test2 b
+  ON DUPLICATE KEY UPDATE cont = b.cont,
+  						name = b.name,
+  						tel_num = b.tel_num,
+  						input_date = now();
+  						
+  # 데이터 넣기
+  INSERT INTO insert_test 
+  VALUES (3,'먼저함', '옥냥이', 1012345678, now()) 
+  ON DUPLICATE KEY UPDATE cont = '먼저함', 
+  						name = '옥냥이', 
+  						tel_num = 1012345678, 
+  						input_date = now();
+  ```
+
+  
