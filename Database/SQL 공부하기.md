@@ -138,8 +138,8 @@
    create table select_test(
    	...
    ) character set utf8; 
-   # 이 부분은 테이블에 한글 데이터가 들어갈 수 있도록 캐릭터 셋을 잡아주는 명령어이다.
-   # 어떤 캐릭터 셋으로 데이터베이스가 설치되었는지 모를때만 쓰면 됨
+   -- 이 부분은 테이블에 한글 데이터가 들어갈 수 있도록 캐릭터 셋을 잡아주는 명령어이다.
+   -- 어떤 캐릭터 셋으로 데이터베이스가 설치되었는지 모를때만 쓰면 됨
    
    desc select_test;
    ```
@@ -175,7 +175,7 @@
    ```sql
    select name 이름, '님 안녕하세요!!' 인사문구 from test.select_test;
    select name as 이름, '님 안녕하세요!!' as 인사문구 from test.select_test;
-   # 둘 다 동일한 기능이지만 가독성을 위해 후자를 쓰자
+   -- 둘 다 동일한 기능이지만 가독성을 위해 후자를 쓰자
    ```
 
 7. DISTINCT로 중복된 값을 제외하고 출력하기
@@ -191,14 +191,14 @@
    여러 칼럼의 값이나, 문자열로 된 표현식을 붙혀서 하나의 column으로 표현할 수 있다.
 
    ```sql
-   # 연결 연산자 함수 concat(something, something)
+   -- 연결 연산자 함수 concat(something, something)
    select concat(name,'의 부서코드는 ',dept_cd,' 입니다.') from test.select_test;
-   # oracle의 연결 연산자
+   -- oracle의 연결 연산자
    select name||'의 부서코드는 '||dept_cd||' 입니다.' from test.select_test;
    ```
 
    ```sql
-   # 이름이 엄준식인 사람의 부서코드 찾아서 출력하기
+   -- 이름이 엄준식인 사람의 부서코드 찾아서 출력하기
    select concat(name,'의 부서코드는 ',dept_cd,' 입니다.') 
    from test.select 
    where name = '엄준식';
@@ -246,7 +246,7 @@
 
     ```sql
     select * from test.exam_result order by math desc;
-    # sql 실행 결과의 3번째 컬럼을 기준으로 정렬 (권장하지 않음)
+    -- sql 실행 결과의 3번째 컬럼을 기준으로 정렬 (권장하지 않음)
     select * from test.exam_result order by 3;
     ```
 
@@ -587,9 +587,9 @@
 
      ```sql
      SELECT 100 + 200 FROM DUAL;
-     SELECT '100' + '200' FROM DUAL; # 답은 300으로 출력됨
+     SELECT '100' + '200' FROM DUAL; -- 답은 300으로 출력됨
      
-     SELECT CONCAT(82, '는 대한민국 국가 식별 전화번호') FROM DUAL; # 숫자를 문자열로 바꿔줌
+     SELECT CONCAT(82, '는 대한민국 국가 식별 전화번호') FROM DUAL; -- 숫자를 문자열로 바꿔줌
      ```
 
 3. 형 변환 함수 사용하기
@@ -640,7 +640,7 @@
    	, salary
    	, bonus
    from class.salary;
-   # 위와 같이 써도 되지만 아래가 좀 더 명확하다.
+   -- 위와 같이 써도 되지만 아래가 좀 더 명확하다.
    select name
    	, case  when dept = 'A' then '경영지원부'
    			when dept = 'B' then '영업부'
@@ -742,13 +742,13 @@
    - 컬럼 명을 그대로 쓸 수 있지만, 함수를 이용해야 할 수도 있다. 이 때는 select 절에도 group by 절에서 쓴 함수를 그대로 써줘야 정상적으로 작동한다.
 
    ```sql
-   # grouping을 잘못 한 경우 (컬럼 값이 원하지 않는 방식으로 나온다)
+   -- grouping을 잘못 한 경우 (컬럼 값이 원하지 않는 방식으로 나온다)
    
    select do, avg(budget_value) as 예산평균, sum(budget_value) as 예산합계
    from class.budget
    group by if(do in ('서울특별시', '경기도'), '수도권', '지방');
    
-   # select 절을 group by 절과 같도록 작성한 경우
+   -- select 절을 group by 절과 같도록 작성한 경우
    
    select if(do in ('서울특별시', '경기도'), '수도권', '지방') as 지역구분, avg(budget_value) as 예산평균, sum(budget_value) as 예산합계
    from class.budget
@@ -853,19 +853,19 @@
   cross join, join, inner join 모두 사용할 수 있다.
 
   ```sql
-  # 1
+  -- 1
   select p.name as 교수이름, m.major_title as 학과명 
   from class.professor p 
   	join class.major m 
   		on p.bl_major_id = m.major_id;
   
-  # 2
+  -- 2
   select p.name as 교수이름, m.major_title as 학과명 
   from class.professor p 
   	cross join class.major m 
   		on p.bl_major_id = m.major_id;
   
-  # 3 inner join으로 쓰는게 아무래도 제일 보기 명확하다.
+  -- 3 inner join으로 쓰는게 아무래도 제일 보기 명확하다.
   select p.name as 교수이름, m.major_title as 학과명 
   from class.professor p 
   	inner join class.major m 
@@ -881,12 +881,12 @@
     테이블 1과 2의 공통키를 찾아 연결후 이 결과물이 되는 테이블을 다시 테이블 3과 1:1 조인한다고 생각한다.
 
   ```sql
-  # MySql
+  -- MySql
   select s.name as 학생이름, p.name as 교수이름, m.major_title as 학과명 
   from class.student s, class.major m, class.professor p 
   where s.bl_prfs_id = p.prfs_id and p.bl_major_id = m.major_id;
   
-  # Ansi Sql
+  -- Ansi Sql
   select s.name as 학생이름, p.name as 교수이름, m.major_title as 학과명 
   from class.student s 
   	inner join class.major m 
@@ -905,12 +905,12 @@
   between, and를 사용하며 이 조건에 해당하면 조인한다.
 
   ```sql
-  # MySQL
+  -- MySQL
   select c.name as 고객명, c.point as 고객_point, g.name as 상품명
   from class.customer c, class.gift g
   where c.point between g.point_s and g.point_e;
   
-  # Ansi SQL
+  -- Ansi SQL
   select c.name as 고객명, c.point as 고객_point, g.name as 상품명
   from class.customer c join class.gift g
   on c.point between g.point_s and g.point_e;
@@ -936,7 +936,7 @@
   select * 
   from A full outer join B 
   on A.a = B.b; 
-  # 위의 full outer join 연산을 아래의 union all을 통해 구할 수 있음
+  -- 위의 full outer join 연산을 아래의 union all을 통해 구할 수 있음
   select * 
   from A left outer join B 
   on A.a = B.b 
@@ -987,14 +987,14 @@
 - 쿼리의 결과가 하나의 행으로만 나와야 한다. 두 개 이상의 행이 나오게 된다면 SQL이 실행되지 않는다.
 
   ```sql
-  # 1
+  -- 1
   SELECT
   	(SELECT B.NAME
   	 FROM DEPT B
   	 WHERE B.DEPT_NO = A.EMP_NO)
   FROM EMP_NO A;
   
-  # 2 학생 테이블의 major_id 값을 학과 테이블에서 검색하여 학과명을 출력
+  -- 2 학생 테이블의 major_id 값을 학과 테이블에서 검색하여 학과명을 출력
   SELECT NAME as 학생이름,
   	(SELECT major_title
        from class.major b
@@ -1017,7 +1017,7 @@
   (메인 쿼리의 select에서 사용, where에서 조건으로 사용, join시 key로 사용 시)
 
   ```sql
-  # 1
+  -- 1
   SELECT cs.name, SUM(od.saleprice) "total"
   FROM (
   	SELECT custid, name
@@ -1027,7 +1027,7 @@
   WHERE cs.custid = od.custid
   GROUP BY cs.name;
   
-  # 2
+  -- 2
   SELECT a.name as 학생이름, b.major_title as 학과면
   FROM class.student a, 
   	(
@@ -1056,7 +1056,7 @@
      IN(NOT IN), EXIST, NOT EXIST
 
   ```sql
-  # 단일행 서브쿼리
+  -- 단일행 서브쿼리
   SELECT name as 학생이름
   FROM class.student
   WHERE major_id = 
@@ -1064,7 +1064,7 @@
        from class.major 
        where major_title='컴퓨터공학과')
   	
-  # 복수행 서브쿼리
+  -- 복수행 서브쿼리
   SELECT name as 학생이름
   FROM class.student
   WHERE major_id in 
@@ -1152,9 +1152,9 @@
 
      ```sql
      UPDATE [테이블명] SET [컬럼명] = [값] WHERE [키 컬럼] = [키 값];
-     # 예시
+     -- 예시
      UPDATE class.update_test SET name = '엄준식' WHERE seq = 26;
-     # 비교 연산자 사용
+     -- 비교 연산자 사용
      UPDATE class.update_test SET name = '진용원' WHERE seq in (11, 12, 13, 14, 15);
      ```
 
@@ -1201,7 +1201,7 @@
 - 어떤 데이터를 입력할 때, 대상 테이블에 해당 키를 갖는 데이터가 없으면 insert문을 실행하여 입력하고 이미 데이터가 존재하면 update하여 값을 갱신
 
   ```sql
-  # select문 사용하기
+  -- select문 사용하기
   INSERT INTO class.insert_test
   SELECT *
   FROM class.insert_test2 b
@@ -1210,7 +1210,7 @@
   						tel_num = b.tel_num,
   						input_date = now();
   						
-  # 데이터 넣기
+  -- 데이터 넣기
   INSERT INTO insert_test 
   VALUES (3,'먼저함', '옥냥이', 1012345678, now()) 
   ON DUPLICATE KEY UPDATE cont = '먼저함', 
@@ -1219,4 +1219,463 @@
   						input_date = now();
   ```
 
+
+<br>
+
+### DDL문
+
+- DBMS를 사용하고 관리하는 데 있어서 가장 중요한 것
+
+- DB 내의 많은 오브젝트를 생성, 변경, 관리하는 쿼리문이다.
+
+- 4종류가 있다. CREATE, ALTER, TRUNCATE, DROP 
+
+  1. CREATE
+
+     - 새로운 오브젝트나 스키마 등을 생성할 때 사용
+
+     - MySQL의 오브젝트 대부분을 생성할 수 있다. (Table, Procedure, Function, Index, User 등)
+
+     - primary key가 되는 컬럼은 not null로 정의되어 있어야 한다.
+
+       복수 컬럼을 pk로 설정하고 싶다면 `primary key([컬럼 1], [컬럼 2], ...)`와 같이 쓰면 된다.
+
+     - 코멘트는 논리 컬럼명이나 column description라고 표현 가능하다.
+
+     - `engine = InnoDB`는 MySQL의 스토리지 엔진 중 InnoDB를 사용한다는 뜻이다. 
+
+     ```sql
+     CREATE TABLE [스키마].[테이블명](
+     	[컬럼명] [자료형] [null 옵션] comment '[코멘트]'
+     	primary key([컬럼명])
+     ) comment '[코멘트]' engine = InnoDB;
+     ```
+
+     ```sql
+     -- DB 계정(user) 관리
+     -- localhost에서만 접속 허용
+     CREATE user 'user'@'127.0.0.1' identified by 'password';
+     -- 모든 곳에서 접속 허용
+     CREATE user 'user'@'%' identified by 'password';
+     ```
+
+     > MySQL은 2가지 구조로 되어 있다.
+     >
+     > 1. 서버 엔진
+     >
+     >    - 클라이언트에서 쿼리를 요청시, 파싱을 하고 스토리지 엔진에 요청을 보내는 역할
+     >
+     > 2. 스토리지 엔진
+     >
+     >    - 물리적 저장장치에서 데이터 읽어오는 역할
+     >    - 엔진의 종류마다 동작 원리가 다르다.
+     >
+     >    - 데이터를 직접적으로 다루므로 가장 중요한 엔진이다. 트랜잭션 등의 성능과 밀접한 연관이 존재한다.
+
+  2. ALTER
+
+     - 이미 만들어져 있는 오브젝트의 내용을 변경할 때 사용
+     - 컬럼명, 컬럼의 데이터 타입, 코멘트 등을 변경할 수 있다.
+     - 신규 컬럼 추가나, 기존 컬럼 삭제도 가능하다.
+
+     ```sql
+     -- 컬럼명 변경
+     ALTER TABLE [테이블명] CHANGE [이전컬럼명] [바꿀컬럼명] [데이터타입] [null 옵션];
+     
+     -- 컬럼 추가
+     ALTER TABLE [테이블명] ADD [컬럼명] [데이터타입] [NULL 옵션] AFTER [앞에 위치할 컬럼명]
+     ```
+
+  3. TRUNCATE
+
+     - 테이블의 데이터를 전부 삭제하고 테이블이 차지하고 있던 공간을 반납
+
+     - 테이블 자체를 DROP한 후 다시 CREATE하는 방식이다. (DELETE와 다름)
+
+       따라서 전체 데이터 삭제시 **DELETE보다 빠르지만, 데이터 복구가 불가능**하다. 
+
+     - 오라클에서는 인덱스가 DROP되며, MySQL에서는 인덱스가 DROP되지 않는다.
+
+     - `AUTO_INCREMENT`로 지정하여 증가하던 컬럼이 초기화된다.
+
+     ```sql
+     TRUNCATE TABLE [스키마].[테이블];
+     ```
+
+  4. DROP
+
+     - 테이블 자체를 삭제, 인덱스도 함께 삭제
+     - 저장공간 또한 함께 반납한다.
+     - 실수로 테이블을 DROP했을 시 MySQL에서는 BINLOG 파일을 이용해서 데이터를 살려야 한다.
+
+     ```sql
+     DROP TABLE [스키마].[테이블];
+     ```
+
+<br>
+
+### Data dictionary
+
+- MySQL 서버 내에 있는 데이터베이스 개체에 관한 정보가 모두 모아져 있는 곳이다. 
+
+- 해당 DB에 생성된 유저, 스키마, 테이블, 컬럼, 테이블 내의 데이터, 오브젝트 간의 종속성 등의 정보가 들어 있다. 
+
+- 4가지 종류가 있다. 
+
+  information_schema, mysql, sys, performance_schema 
+
+- performance_schema는 DB 내 성능 지표를 확인할 수 있는 스키마이다. MySQL 소스 코드 곳곳에 심어 있는 여러 instrunment를 통해 수집된다. 
+
+- 여기서는 많이 사용되는 information_schema, mysql을 보자.
+
+1. information_schema
+
+   - Data Dictionary, System Catalog라고도 한다.
+
+   - `select TABLE_SCHEMA, TABLE_NAME from information_schema.TABLES where TABLE_SCHEMA = 'information_schema';`를 치면 겁나 많은 테이블 목록이 나오는데, 자주 쓰이는 system view만 살펴보자.
+
+     아래와 같이 사용한다.
+
+     ```sql
+     select * from [table 이름];
+     select * from information_schema.SCHEMATA;
+     ```
+
+   - `information_schema.SCHEMATA`
+
+     MySQL 내부에 있는 스키마(db) 목록을 볼 수 있고, 스키마별 캐릭터 셋을 확인할 수 있다.
+
+   - `information_schema.TABLES`
+
+     MySQL 내부에 생성되어 있는 SYSTEM VIEW 및 테이블에 관한 정보를 볼 수 있다.
+
+     생성일자, 수정일자, 테이블 내 row 개수, 테이블 코멘트, 스토리지 엔진 타입 정보를 한번에 확인 가능하다.
+
+   - `information_schema.COLUMNS`
+   
+     MySQL 내부에 생성되어 있는 칼럼 정보를 확인할 수 있다.
+   
+     컬럼명, 초기입력값, 컬럼 순서, 테이터 타입, 데이터 길이, 컬럼 코멘트 등의 정보를 확인 가능하다.
+   
+   - `information_schema.ROUTINES`
+   
+     MySQL 내부에 생성되어 있는 function과 procedure에 관한 정보들이 있다.
+   
+     각 프로그램별 입출력 데이터 정보와 프로그램 소스 정보가 저장되어 있다.
+   
+   - `information_schema.KEY_COLUMN_USAGE`
+   
+     테이블 별 pk 컬럼이나 unique 제약조건 목록을 확인할 수 있다.
+   
+   - `information_schema.PROCESSLIST`
+   
+     현재 MySQL에 접속되어 있는 세션 정보를 확인할 수 있다.
+   
+     세션 상태와 접속한 user, host, 어떤 sql을 실행하고 있는지 등을 확인할 수 있다.
+   
+   - 더 자세한 정보는 [여기](https://dev.mysql.com/doc/mysql-infoschema-excerpt/8.0/en/information-schema.html)서 확인할 수 있다.
+   
+2. mysql
+
+   - information_schema를 통해 조회할 수 있는 내용과 중복된 내용도 있다.
+
+   - 자주 쓰이는 것만 살펴보자.
+
+   - `mysql.user`
+
+     MySQL 내부에 생성된 user에 관한 정보가 들어 있다.
+
+     host 정보, 암호화된 비밀번호, 기본 권한에 대한 정보가 있다.
+
+   - `mysql.general_log`
+
+     DB로그를 Table 타입으로 저장할 때 쌓이는 테이블
+
+     로그 설정을 하지 않았다면 이 테이블에는 정보가 없을 것이다.
+
+     sql 실행 시간, host 및 user 정보, 상세 sql이 저장되어 있다.
+
+   - `mysql.slow_log`
+
+     long_query_time 파라미터 값보다 오래 걸리는 쿼리가 저장된다.
+
+     성능 분석시 용이하게 사용 가능하다.
+
+<br>
+
+### 제약 조건
+
+- contraint라고 하며 데이터를 입력받는 규칙을 의미한다. 규칙에 어긋나는 데이터는 입력 및 변경이 이루어지지 않도록 한다.
+
+- 특정 컬럼에 중복값이 들어오는 것을 막거나, 값이 범위를 벗어나지 않도록 하거나, 상위 테이블에 등록된 값만 하위 테이블에 입력이 되도록 지정하는 것 등이 있다.
+
+- DB 테이블의 정확성과 신뢰도를 증가시킨다.
+
+- 제약 조건은 테이블 생성시 포함하거나, 추후 컬럼에 추가, 변경, 삭제할 수 있다.
+
+- 설계 단계에서 모든 제약조건을 고려하면 좋으나 현실적으로 어렵다.
+
+- 실무에서는 foreign key는 잘 적용하지 않는 추세라고 한다.
+
+- MySQL의 제약 조건
+
+  1. primary key
+
+     - 컬럼의 중복을 막고, null을 허용하지 않는다. (unique + not null)
+     - 각 row를 특정할 수 있는 구분키이다.
+     - 테이블당 하나만 생성 가능하며, pk 자체가 복수 컬럼이 되는 것은 가능하다.
+
+     ```sql
+     alter table schema_name.table_name add primary key (col1, col2, ....); -- drop 
+     alter table schema_name.table_name drop primary key;
+     ```
+
+  2. foreign key
+
+     - 어떤 테이블의 컬럼 값은, 다른 테이블의 컬럼 값을 참조하여야 한다는 제약 조건
+     - 예를 들면 주문 테이블에 들어오는 고객 ID는 반드시 고객 테이블에 존재해야 한다는 것이다.
+
+     ```sql
+     alter table order add constraint order_customer_id_fk foreign key (customer_id) references customer (customer_id); 
+     -- drop 
+     alter table order drop key order_customer_id_fk;
+     ```
+
+  3. Not null
+
+     - 해당 칼럼에는 null 값이 들어올 수 없다고 명시하는 것
+
+     ```sql
+     alter table schema_name.table_name modify col1 int not null; 
+     -- not null 해제 
+     alter table schema_name.table_name modify col1 int null;
+     ```
+
+  4. Unique
+
+     - 해당 컬럼에는 중복값이 들어가지 못하게 설정하는 것
+     - primary key가 아닌 컬럼에 사용
+     - 복수 컬럼을 한번에 지정할 수 있는데, 이 경우 두 컬럼의 값이 모두 같은 경우 중복값으로 인식된다.
+     - 이 제약 조건을 잘못 설정하면 해당 테이블에 insert가 되지 않는 상황도 발생할 수 있으므로 조심해야 한다.
+
+     ```sql
+     alter table schema_name.table_name add constraint table_pk unique (col1, col2); 
+     -- drop 
+     alter table schema_name.table_name drop key table_pk;
+     ```
+
+  5. Check
+
+     - 해당 컬럼에는 check 제약 조건으로 지정된 값만 들어오도록 설정하는 것이다.
+     - 특정 값만 들어와야 하는 여부, 성별, 범위, 수량 정보를 저정하는 컬럼에 설정할 수 있다.
+     - 무결성을 보장해주지만, unique처럼 신중하게 사용해야 한다.
+
+     ```sql
+     ALTER TABLE schema_name.table_name ADD CONSTRAINT CHK_PersonAge CHECK (col1 >=18); 
+     -- drop 
+     ALTER TABLE schema_name.table_name DROP CONSTRAINT CHK_PersonAge;
+     ```
+
+  6. Default
+
+     - 규칙보다는 초기값을 의미하므로 엄밀히 말하면 제약조건은 아니다.
+     - 특별한 값을 지정하지 않을 때 row를 생성하면 미리 지정한 값이 들어간다.
+
+     ```sql
+     alter table customer alter column name set default 'N'; 
+     -- drop 
+     alter table customer alter column name drop default;
+     ```
+
+<br>
+
+### 인덱스
+
+- 쿼리의 성능을 높이기 위해서 사용한다. 테이블 내의 데이터를 정렬하고, 필요한 데이터만 빠르게 가져온다.
+
+- 인덱스의 종류
+
+  1. 클러스터 인덱스
+     - primary key를 설정하면 자동으로 생성된다.
+     - 해당 pk 컬럼 데이터가 변경되더라도 항상 정렬을 유지한다.
+     - 테이블당 1개의 클러스터 인덱스를 생성할 수 있다.
+     - 지정된 컬럼을 기준으로 데이터가 물리적으로 정렬된다. 따라서 리프 노드와 추가적인 공간이 필요하지 않다.
+     - 조회 성능은 빠르지만, insert, update, delete와 같은 변경 작업 시 정렬을 하므로 성능이 떨어질 수 있다.
+     - 클러스터 인덱스 생성 시 테이블 내의 다른 보조 인덱스에 pk 값을 포함하게 된다. 이로 인해 보조 인덱스들의 크기가 커질 수 있다.
+     - 클러스터 인덱스를 제외한 다른 인덱스는 논 클러스터 인덱스라고 부르며, 테이블당 249개까지 생성 가능하다.
+  2. 단일 인덱스
+     - 인덱스 생성 시 하나의 컬럼만 지정하는 경우
+     - 주로 데이터가 많지 않은 경우 사용
+     - 주로 사용하는 sql에 조건이 하나만 걸릴 때 생성
+  3. 복합 인덱스
+     - 인덱스 생성 시 두 개 이상의 컬럼을 지정하는 경우
+     - 주로 사용하는 조회 쿼리에 조건이 많이 걸릴 때 사용을 고려할 수 있다.
+     - 테이블에서 다른 공간으로 데이터를 가지고 와서 정렬하므로 용량을 차지한다.
+  4. 커버드 인덱스
+     - sql 내에서 출력하는 컬럼과 조건에 삽입된 컬럼이 모두 인덱스에 정보가 있어서 실제 테이블을 조회하지 않고 데이터를 가지고 올 수 있는 경우에 사용되는 인덱스
+     - 성능적인 측면만 고려할 때 가장 좋을 수 있는 방법이다.
+
+- 인덱스 생성 기준
+
+  1. 테이블 내에 데이터가 많을 때 
+
+     데이터가 적은 경우 full scan이 index scan보다 빠를 수 있다. 테이블 내에 데이터가 많을수록 효과를 크게 볼 수 있다.
+
+  2. Primary key 컬럼에는 생성할 필요가 없다.
+
+     pk 컬럼은 클러스터 인덱스가 생성되며, unique 컬럼도 마찬가지이다. pk와 unique 컬럼은 인덱스를 따로 추가할 필요가 없다.
+
+  3. Cardinality를 확인하고 생성하자
+
+     cardinality는 컬럼 내 값의 분산도를 의미한다. 주민등록번호는 cardinality가 높고, 성별은 cardinality가 낮다고 할 수 있다. 분산도가 큰 데이터에 인덱스를 생성하는 것이 유리하다.
+
+- 인덱스의 역효과
+
+  1. 오버헤드
+
+     데이터가 변경되는 작업(insert, update, delete) 발생시 인덱스 갱신이 함께 이루어지므로 오버헤드가 발생한다. 
+
+  2. 오사용
+
+     한 개의 테이블에 여러 인덱스 생성 시 옵티마이저가 실행 계획을 만들 때 의도하지 않은 인덱스를 사용하게 될 수 있다. 따라서 꼭 필요한 곳에 적당히 사용해야 한다.
+
+- B-tree 인덱스
+
+  - 여러 DBMS에서 가장 많이 사용하는 방식이다.
+
+  - 컬럼의 데이터는 변형시키지 않고 인덱스 내부에서 정렬된 상태로 유지한다.
+
+  - 전문 검색과 같이 특이한 상황이 아니면 보통 B-Tree 인덱스를 사용한다.
+
+  - 3개의 노드로 구분할 수 있다.
+
+    1. Root node 최상위 노드
+    2. Leaf node 최하위 노드
+    3. Branch node 루트와 리프 노드를 연결하는 노드
+
+    ![image](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fcf5EvN%2FbtqFyRCDpdV%2FA3ohkDXznTskWlgmkizAEK%2Fimg.png)
+
+  - 인덱스 값이 새로 들어오면, 키값을 이용해서 적당한 위치를 찾는다. 저장될 위치가 결정되면 레코드의 키 값과 주소 정보를 B-Tree 인덱스의 leaf node에 저장한다. 이 때 leaf node가 꽉 차서 분리될 수도 있다. 
+
+  - 일반적으로 테이블에 데이터를 저장하는 것보다 1~1.5배 비용이 더 발생한다.
+
+  - 인덱스 내의 키가 변경될 때에는 delete and insert가 수행된다.
+
+- 인덱스를 사용할 수 없는 SQL 조건절
+
+  1. equal로 조건절이 작성되지 않는 경우
+
+     <>, NOT IN, NOT BETWEEN AND, NOT NULL
+
+  2. like를 사용하는 경우
+
+     `like '%Test'`
+
+  3. function을 사용하는 경우
+
+     `substring(col_name, 1)='A'`
+
+  4. 데이터 타입이 서로 다른 경우
+
+     `char_col = 10`
+
+- 인덱스 사용 예제
+
+  ```sql
+  -- 인덱스 생성하기
+  CREATE INDEX <Index name> ON <Table name> ( column 1, column 2, ... ); 
+  -- 단일 인덱스 
+  ALTER TABLE books ADD INDEX idx_test ( writer ); 
+  -- 복합 인덱스 
+  ALTER TABLE books ADD INDEX idx_test ( writer, company, ... );
   
+  -- 인덱스 삭제하기
+  ALTER TABLE books DROP INDEX idx_test;
+  
+  -- 유니크 인덱스 생성
+  ALTER TABLE tablename ADD UNIQUE INDEX indexname (column1, column2);
+  
+  -- 생성된 인덱스 확인
+  SHOW INDEX FROM <Table name>;
+  ```
+
+<br>
+
+### View
+
+- 가상의 테이블을 의미한다. 데이터는 없고, sql만 저장되어 있는 object이다.
+- select 서브 쿼리에서 사용한 inline view가 바로 요것이다.
+- view를 select하게 되면 view가 가지고 있는 sql문이 실행된다.
+
+1. 이거 왜쓰냐?
+
+   - view라는 object를 따로 만들어서 관리하는 것은 보안과 사용자의 편의성을 높이기 위한 것이다.
+   - 여러 테이블을 조인할 때 view를 이용하면 sql을 간소화 시킬 수 있다. 또한 복잡한 sql을 편하게 재생성할 수 있다.
+   - 보안을 위해 쓰는 경우는 다음과 같다. 특정 유저가 어떤 스키마 테이블을 보는 권한이 없으며 보안상 공개할 수도 없지만 해당 테이블의 특정 정보가 업무상 꼭 필요한 경우가 있을 수 있다. 이 때 view를 생성하여 사용하면 꼭 필요한 정보만 보여주고, 전체 정보는 공개하지 않을 수 있다.
+
+2. 특징
+
+   - 일반 테이블과 같은 형태를 가지며, sql로 조작하는 방법도 흡사하다.
+
+   - 데이터의 논리적 독립성을 가지고 있다. 
+
+   - 필요한 데이터만 따로 정의해서 사용하므로 관리가 용이하고, sql 명령문이 간단해진다.
+
+   - 뷰 생성시 기본 테이블의 키를 포함한다면 삽입, 삭제, 갱신, 연산이 가능하다.
+
+   - 생성된 뷰는 다른 뷰의 기본 데이터가 될 수 있다. 기본 데이터가 되는 테이블이나 뷰를 삭제하면, 해당 데이터를 기초로 한 다른 뷰들이 자동으로 삭제된다.
+
+   - ALTER 명령어를 사용할 수 없고, 수정을 원한다면 drop 후 create 를 해주어야 한다.
+
+   - 원본 테이블과 같은 이름으로 생성할 수 없다.
+
+     실무에서는 대체적으로 "vw_"와 같은 접두사를 붙여서 뷰라는 것을 명시해준다.
+
+3. 사용 예제
+
+   ```sql
+   -- 생성
+   CREATE VIEW [뷰이름] AS [SELECT 구문];
+   -- 삭제
+   DROP VIEW [뷰이름];
+   ```
+
+4. 실행 원리
+
+   - 아래 쿼리로 `accounts_view` 뷰를 생성한다
+
+     ```sql
+     SELECT name,
+            money_received,
+            money_sent,
+            (money_received - money_sent) AS balance,
+            address,
+      ...
+       FROM table_customers c
+       JOIN accounts_table a
+         ON a.customer_id = c.customer_id
+     ```
+
+   - 생성한 뷰로 sql을 실행한다
+
+     ```
+     SELECT name, balance
+     FROM accounts_view;
+     ```
+
+   - 실제 DBMS 옵티마이저가 인식하는 SQL은 다음과 같다.
+
+     ```sql
+     SELECT name,balance
+     FROM (SELECT name,
+                  money_received,
+                  money_sent,
+                  (money_received - money_sent) AS balance,
+                  address,
+      ...
+           FROM table_customers c JOIN accounts_table a
+             ON a.customer_id = c.customer_id);
+     ```
+
+     
+
