@@ -215,11 +215,11 @@ typedef struct timeval{
 
 ### IOCP 생성하기
 
-`CreateIoCompletionPort()`의 역할
+`CreateIoCompletionPort()`의 역할은 두 가지가 있다! *
 
-1. IOCP를 새로 생성하기
+1. IOCP 오브젝트를 새로 생성하기
 
-2. 소켓과 IOCP를 연결하기
+2. 소켓과 IOCP를 연결하기 (특정 핸들을 적용하기)
 
    연결하면 소켓에 대한 입출력 결과가 IOCP에 저장됨
 
@@ -283,3 +283,9 @@ HANDLE CreateIoCOmpletionPort(
   작업자 스레드가 대기할 시간을 ms단위로 지정. 일반적으로 `INFINITE`를 넣고, IOCPacket이 생성되고 OS가 깨울 때까지 무한히 대기하도록 한다.
 
 - `PostQueuedCompltionStatus()`를 사용하여 응용 프로그램이 `worker thread`특별한 사실을 알리기 위해 직접 IOCPacket을 생성할 수도 있다.
+
+### 토막 지식
+
+- `WSASend()`, `WSARecv()`가 논 블로킹 모드로 작동함
+- IOCP는 MS가 특허낸 기술임 리눅스에서 못쓴당 윈도우만 쓸수있음 ㄷㄷ
+- 
