@@ -11,18 +11,18 @@ bool IOCPServer::InitSocket(){
     WSADATA wsaData;
 
     if(WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        printf("[ì—ëŸ¬] WSAStartup()í•¨ìˆ˜ ì‹¤íŒ¨ : %d\n", WSAGetLastError());
+        printf("[¿¡·¯] WSAStartup()ÇÔ¼ö ½ÇÆĞ : %d\n", WSAGetLastError());
         return false;
     }
 
     mListenSocket = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 
     if(mListenSocket == INVALID_SOCKET){
-        printf("[ì—ëŸ¬] socket()í•¨ìˆ˜ ì‹¤íŒ¨ : %d\n", WSAGetLastError());
+        printf("[¿¡·¯] socket()ÇÔ¼ö ½ÇÆĞ : %d\n", WSAGetLastError());
         return false;
     }
 
-    printf("ì†Œì¼“ ì´ˆê¸°í™” ì„±ê³µ\n");
+    printf("¼ÒÄÏ ÃÊ±âÈ­ ¼º°ø\n");
     return true;
 }
 
@@ -33,16 +33,16 @@ bool IOCPServer::BindAndListen(int nBindPort){
     stServerAddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     if(0 != bind(mListenSocket, (SOCKADDR*)&stServerAddr, sizeof(SOCKADDR_IN))){
-        printf("[ì—ëŸ¬] bind()í•¨ìˆ˜ ì‹¤íŒ¨ : %d\n", WSAGetLastError());
+        printf("[¿¡·¯] bind()ÇÔ¼ö ½ÇÆĞ : %d\n", WSAGetLastError());
         return false;
     }
 
-    if(0 != listen(mListenSocket, WAIT_QUEUE_CNT)){ // ì ‘ì† ëŒ€ê¸° í 5ê°œ
-        printf("[ì—ëŸ¬] listen()í•¨ìˆ˜ ì‹¤íŒ¨ : %d\n", WSAGetLastError());
+    if(0 != listen(mListenSocket, WAIT_QUEUE_CNT)){ // Á¢¼Ó ´ë±â Å¥ 5°³
+        printf("[¿¡·¯] listen()ÇÔ¼ö ½ÇÆĞ : %d\n", WSAGetLastError());
 		return false;
     }
 
-    printf("ì„œë²„ ë“±ë¡ ì„±ê³µ..\n");
+    printf("¼­¹ö µî·Ï ¼º°ø..\n");
 	return true;
 }
 
@@ -57,24 +57,24 @@ bool IOCPServer::StartServer(const UINT32 maxClientCount){
         MAX_WORKERTHREAD
     );
 
-    printf("[ì„±ê³µ] IOCP ìƒì„±, ìµœëŒ€ ì‚¬ìš© ìŠ¤ë ˆë“œ %dê°œ\n", MAX_WORKERTHREAD);
+    printf("[¼º°ø] IOCP »ı¼º, ÃÖ´ë »ç¿ë ½º·¹µå %d°³\n", MAX_WORKERTHREAD);
 
     if(mIOCPHandle == NULL){
-        printf("[ì—ëŸ¬] CreateIoCompletionPort()í•¨ìˆ˜ ì‹¤íŒ¨: %d\n", GetLastError());
+        printf("[¿¡·¯] CreateIoCompletionPort()ÇÔ¼ö ½ÇÆĞ: %d\n", GetLastError());
 		return false;
     }
 
     if(false == createWorkerThread()){
-        printf("[ì—ëŸ¬] createWorkerThread() í•¨ìˆ˜ ì‹¤íŒ¨");
+        printf("[¿¡·¯] createWorkerThread() ÇÔ¼ö ½ÇÆĞ");
         return false;
     }
 
     if(false == createAccepterThread()){
-        printf("[ì—ëŸ¬] createAccepterThread() í•¨ìˆ˜ ì‹¤íŒ¨");
+        printf("[¿¡·¯] createAccepterThread() ÇÔ¼ö ½ÇÆĞ");
         return false;
     }
 
-    printf("ì„œë²„ ì‹œì‘\n");
+    printf("¼­¹ö ½ÃÀÛ\n");
     return true;
 }
 
@@ -82,12 +82,14 @@ void IOCPServer::DestroyThread(){
     mbIsWorkerRun = false;
     CloseHandle(mIOCPHandle);
 
-    // worker thread join í•˜ê¸°
+    for(size_t i = 0;i<mIOWorkerThreads.size();++i){
+        WaitForSingleObject(mIOWorkerThreads[i], INFINITE);
+    }
 
     mbIsAccepterRun = false;
     closesocket(mListenSocket);
 
-    // accepter thread join í•˜ê¸°
+    WaitForSingleObject(mAccepterThread, INFINITE);
     
 }
 
@@ -106,11 +108,10 @@ bool IOCPServer::createWorkerThread(){
 
     for(int i=0;i<MAX_WORKERTHREAD;i++){
         hThread = CreateThread(NULL, 0, StaticWorkerThread, this, 0, &dwThreadId);
-        mIOWorkerThreads.push_back(dwThreadId);
-        CloseHandle(hThread);
+        mIOWorkerThreads.push_back(hThread);
     }
 
-    printf("WokerThread ìƒì„± ì™„ë£Œ\n");
+    printf("WorkerThread »ı¼º ¿Ï·á\n");
     return true;
 }
 
@@ -119,7 +120,7 @@ bool IOCPServer::createAccepterThread(){
     unsigned long dwThreadId;
     mAccepterThread = CreateThread(NULL, 0, StaticAccepterThread, (void*) this, 0, &dwThreadId);
     CloseHandle(mAccepterThread);
-    printf("Accepter Thread ì‹œì‘\n");
+    printf("Accepter Thread ½ÃÀÛ\n");
     return true;
 }
 
@@ -144,36 +145,37 @@ void IOCPServer::CloseSocket(stClientInfo* pClientInfo, bool bIsForce){
 }
 
 DWORD IOCPServer::AccepterThread(){
-		DWORD dwResult = 0;
-        SOCKADDR_IN stClientAddr;
-        int nAddrLen = sizeof(SOCKADDR_IN);
+    DWORD dwResult = 0;
+    SOCKADDR_IN stClientAddr;
+    int nAddrLen = sizeof(SOCKADDR_IN);
 
-        while(mbIsAccepterRun){
-            stClientInfo* pClientInfo = getEmptyClientInfo();
-            if(NULL == pClientInfo){
-                printf("[ì—ëŸ¬] Client Full\n");
-				return dwResult;
-            }
-
-            SOCKET newSocket = accept(
-                mListenSocket,
-                (SOCKADDR*)&stClientAddr,
-                &nAddrLen
-            );
-            if(INVALID_SOCKET == newSocket)
-                continue;
-
-            if(false == pClientInfo->OnConnect(mIOCPHandle, newSocket) == false){
-                pClientInfo->Close(true);
-                return dwResult;
-            }
-
-            OnConnect(pClientInfo->mIndex);
-
-            ++(mClientCnt);
+    while(mbIsAccepterRun){
+        stClientInfo* pClientInfo = getEmptyClientInfo();
+        if(NULL == pClientInfo){
+            printf("[¿¡·¯] Client Full\n");
+            return dwResult;
         }
-		return dwResult;
-    };
+
+        SOCKET newSocket = accept(
+            mListenSocket,
+            (SOCKADDR*)&stClientAddr,
+            &nAddrLen
+        );
+        if(INVALID_SOCKET == newSocket)
+            continue;
+
+        if(false == pClientInfo->OnConnect(mIOCPHandle, newSocket)){
+            pClientInfo->Close(true);
+            return dwResult;
+        }
+
+        OnConnect(pClientInfo->mIndex);
+
+        ++(mClientCnt);
+    }
+    printf("[¾Ë¸²] Accepter thread Á¾·á\n");
+    return dwResult;
+};
 
 DWORD IOCPServer::WorkerThread(){
     DWORD dwResult = 0;
@@ -208,9 +210,9 @@ DWORD IOCPServer::WorkerThread(){
         if(RECV == pOverlappedEx->m_eOperation){
             OnReceive(pClientInfo->GetIndex(), dwIoSize, pClientInfo->mRecvBuf);
 
-                            //í´ë¼ì´ì–¸íŠ¸ì— ë©”ì„¸ì§€ë¥¼ ì—ì½”í•œë‹¤.
-            // SendMsg(pClientInfo, pClientInfo->mRecvBuf, dwIoSize);
-            // bindRecv(pClientInfo);
+            //Å¬¶óÀÌ¾ğÆ®¿¡ ¸Ş¼¼Áö¸¦ ¿¡ÄÚÇÑ´Ù.
+            pClientInfo->SendMsg(dwIoSize, pClientInfo->mRecvBuf);
+            pClientInfo->BindRecv();
         }
         else if(SEND == pOverlappedEx->m_eOperation){
             delete[] pOverlappedEx->m_wsaBuf.buf;
@@ -218,9 +220,10 @@ DWORD IOCPServer::WorkerThread(){
             pClientInfo->SendCompleted(dwIoSize);
         }
         else{
-            printf("Client Index(%d)ì—ì„œ ì˜ˆì™¸ìƒí™©\n", pClientInfo->GetIndex());
+            printf("Client Index(%d)¿¡¼­ ¿¹¿Ü»óÈ²\n", pClientInfo->GetIndex());
         }
     }
+    printf("[¾Ë¸²] Worker thread Á¾·á\n");
     return dwResult;
 }
 
