@@ -31,7 +31,7 @@ private:
 public:
     Position(){
         mSendPos.X = 0, mSendPos.Y = 20;
-        mRecvPos.X = 0, mRecvPos.Y = 2;
+        mRecvPos.X = 0, mRecvPos.Y = 1;
         mHelpPos.X = 60, mHelpPos.Y = 7;
     }
     
@@ -64,7 +64,7 @@ public:
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),pos);
     }
 
-    void helpBox(){
+    void helpBox(char* nickname){
         setColor(CHAT_MULTICAST);
         gotoxy(mHelpPos.X,mHelpPos.Y+0); printf("¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç\n");
         gotoxy(mHelpPos.X,mHelpPos.Y+1); printf("¢Ç                              ¢Ç\n");
@@ -75,6 +75,7 @@ public:
         gotoxy(mHelpPos.X,mHelpPos.Y+6); printf("¢Ç   Ã¤ÆÃ Á¾·á : /quit          ¢Ç\n");
         gotoxy(mHelpPos.X,mHelpPos.Y+7); printf("¢Ç                              ¢Ç\n");
         gotoxy(mHelpPos.X,mHelpPos.Y+8); printf("¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç¢Ç\n");
+        SendBox(nickname);
     }
 
     
@@ -94,7 +95,6 @@ public:
             printf("%c[2K", 27);
             ++mSendPos.Y;
         }
-        helpBox();
         setColor(action);
         SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), mRecvPos);
         printf("[%s´Ô]: %s\n", nickname, content);

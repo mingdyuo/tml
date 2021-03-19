@@ -56,6 +56,10 @@ bool IOCPClient::CreateThreads(HANDLE* sender, HANDLE* recver){
     return true;
 }
 
+void IOCPClient::ShowHelpBox(){
+    pos.helpBox(mNickname);
+}
+
 bool IOCPClient::Close(){
     printf("[알람] 연결이 종료되었습니다.\n");
     mbIsWorkerRun = false;

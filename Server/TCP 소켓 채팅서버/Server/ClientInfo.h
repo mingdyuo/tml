@@ -7,18 +7,16 @@
 
 enum IOOperation
 {
-	RECV,
+	RECV = 0,
 	SEND
 };
 
-
-//WSAOVERLAPPED구조체를 확장 시켜서 필요한 정보를 더 넣었다.
 struct stOverlappedEx
 {
-	WSAOVERLAPPED m_wsaOverlapped;		//Overlapped I/O구조체
-	SOCKET		m_socketClient;			//클라이언트 소켓
-	WSABUF		m_wsaBuf;				//Overlapped I/O작업 버퍼
-	IOOperation m_eOperation;			//작업 동작 종류
+	WSAOVERLAPPED m_wsaOverlapped;		// Overlapped I/O구조체
+	SOCKET		m_socketClient;			// 클라이언트 소켓
+	WSABUF		m_wsaBuf;				// Overlapped I/O작업 버퍼
+	IOOperation m_eOperation;			// 작업 동작 종류
 };
 
 struct stClientInfo
@@ -26,25 +24,21 @@ struct stClientInfo
 	size_t mIndex;
 	SOCKET			m_socketClient;			
 	stOverlappedEx	m_stRecvOverlappedEx;	
-	stOverlappedEx	m_stSendOverlappedEx;	
 
 	bool			mbHasNick;
 	char 			mNickname[32];
 	UINT16			mRoom;
 
 	char			mRecvBuf[MAX_SOCKBUF]; 
-	char			mSendBuf[MAX_SOCKBUF]; 
 
 	stClientInfo(): mIndex(0), m_socketClient(INVALID_SOCKET), mbHasNick(false), mRoom(0)
 	{
 		ZeroMemory(&m_stRecvOverlappedEx, sizeof(stOverlappedEx));
-		ZeroMemory(&m_stSendOverlappedEx, sizeof(stOverlappedEx));
 	}
 
 	stClientInfo(UINT32 index): mIndex(index), m_socketClient(INVALID_SOCKET), mbHasNick(false), mRoom(0)
 	{
 		ZeroMemory(&m_stRecvOverlappedEx, sizeof(stOverlappedEx));
-		ZeroMemory(&m_stSendOverlappedEx, sizeof(stOverlappedEx));
 	}
 
 public:
@@ -63,11 +57,8 @@ public:
 	}
 
 	void Initialize(){
-		Close();
 		ZeroMemory(&m_stRecvOverlappedEx, sizeof(stOverlappedEx));
-		ZeroMemory(&m_stSendOverlappedEx, sizeof(stOverlappedEx));
 		memset(mNickname, 0, sizeof(mNickname));
-		mIndex = 0;
 	}
 
 	void Close(bool bIsForce = false){
@@ -80,6 +71,8 @@ public:
 		setsockopt(m_socketClient, SOL_SOCKET, SO_LINGER, (char*)&stLinger, sizeof(stLinger));
 
 		closesocket(m_socketClient);
+
+		Initialize();
 		m_socketClient = INVALID_SOCKET;
 	}
 
@@ -125,7 +118,10 @@ public:
 		);
 		
 		if(nRet == SOCKET_ERROR && (WSAGetLastError() != ERROR_IO_PENDING)){
-			printf("[에러] WSARecv()함수 실패 : %d\n", WSAGetLastError());
+			// printf("[에러] WSARecv()함수 실패 : %d\n", WSAGetLastError());
+			// 10054 뜨는데 이거 어떻게 잘 프로세스 맞춰서 종료해야되징?
+			printf("[알림] 클라이언트(%d) 연결 종료\n", GetIndex());
+			Close();
 			return false;
 		}
 
@@ -154,8 +150,9 @@ public:
 		//socket_error이면 client socket이 끊어진걸로 처리한다.
 		if (nRet == SOCKET_ERROR && (WSAGetLastError() != ERROR_IO_PENDING))
 		{
-			printf("[알림] 클라이언트 연결 종료 : %d\n", WSAGetLastError());
-			Initialize();
+			// printf("[알림] 클라이언트 연결 종료 : %d\n", WSAGetLastError());
+			printf("[알림] 클라이언트(%d) 연결 종료\n", GetIndex());
+			Close();
 			return false;
 		}
 

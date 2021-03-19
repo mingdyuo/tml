@@ -17,9 +17,16 @@ int main()
     iocpClient.CreateThreads(&sender, &recver);
 
     system("cls");
-    printf("[%s님] 대화방에 입장하셨습니다.\n", iocpClient.getNickname());
-    printf("[알림] quit을 입력시 클라이언트 종료합니다.\n");
-    printf("인사말을 건네보세요 !! :");
+    printf("      ┏━━┓┏━━┓┏━━┓ ┏┓\n");
+    printf("      ┗━┓┃┃┏┓┃┗━┓┃ ┃┃\n");
+    printf("      ┏━┛┃┃┃┃┃┏━┛┃ ┃┃\n");
+    printf("      ┃┏━┛┃┃┃┃┃┏━┛ ┃┃\n");
+    printf("      ┃┗━┓┃┗┛┃┃┗━┓ ┃┃\n");
+    printf("      ┗━━┛┗━━┛┗━━┛ ┗┛\n");
+    printf("[알림] 대화방에 입장하셨습니다.\n", iocpClient.getNickname());
+
+
+    iocpClient.ShowHelpBox();
 
     WaitForSingleObject (sender, INFINITE);
     WaitForSingleObject (recver, INFINITE);

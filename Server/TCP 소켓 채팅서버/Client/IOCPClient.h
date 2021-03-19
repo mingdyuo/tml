@@ -27,6 +27,7 @@ public:
     bool ConnectServer(int bBindPort);
     bool SetNickname();
     bool CreateThreads(HANDLE* sender, HANDLE* recver);
+    void ShowHelpBox();
     bool Close();
 
     DWORD RecvThread();
