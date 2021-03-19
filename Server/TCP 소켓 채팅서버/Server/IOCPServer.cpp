@@ -49,6 +49,7 @@ bool IOCPServer::BindAndListen(int nBindPort){
 bool IOCPServer::StartServer(const UINT32 maxClientCount){
 
     createClient(maxClientCount);
+    mMaxClientCount = maxClientCount;
 
     mIOCPHandle = CreateIoCompletionPort(
         INVALID_HANDLE_VALUE,
@@ -93,13 +94,11 @@ void IOCPServer::DestroyThread(){
     
 }
 
-
 void IOCPServer::createClient(const UINT32 maxClientCount){
     for(UINT32 i=0;i<maxClientCount;++i){
         mClientInfos.push_back(stClientInfo(i));
     }
 }
-
 
 bool IOCPServer::createWorkerThread(){
     
@@ -115,33 +114,31 @@ bool IOCPServer::createWorkerThread(){
     return true;
 }
 
-
 bool IOCPServer::createAccepterThread(){
     unsigned long dwThreadId;
     mAccepterThread = CreateThread(NULL, 0, StaticAccepterThread, (void*) this, 0, &dwThreadId);
     CloseHandle(mAccepterThread);
+
     printf("Accepter Thread 시작\n");
     return true;
 }
 
-stClientInfo* IOCPServer::getEmptyClientInfo(){
-    size_t clientCnt = mClientInfos.size();
-    for(size_t i = 0;i<clientCnt;i++){
+size_t IOCPServer::getEmptyClientInfo(){
+    for(size_t i = 0;i<mMaxClientCount;i++){
         if(mClientInfos[i].IsConnected() == false)
-            return &mClientInfos[i];
+            return i;
     }
-    return NULL;
+    return mMaxClientCount;
 }
 
 stClientInfo* IOCPServer::getClientInfo(const UINT32 sessionIndex){
     return &mClientInfos[sessionIndex];
 }
 
-
 void IOCPServer::CloseSocket(stClientInfo* pClientInfo, bool bIsForce){
     size_t clientindex = pClientInfo->GetIndex();
     pClientInfo->Close(bIsForce);
-    //onClose(clientIndex);
+    // onClose(clientIndex);
 }
 
 DWORD IOCPServer::AccepterThread(){
@@ -150,8 +147,9 @@ DWORD IOCPServer::AccepterThread(){
     int nAddrLen = sizeof(SOCKADDR_IN);
 
     while(mbIsAccepterRun){
-        stClientInfo* pClientInfo = getEmptyClientInfo();
-        if(NULL == pClientInfo){
+        size_t pClientIndex = getEmptyClientInfo();
+
+        if(mMaxClientCount == pClientIndex){
             printf("[에러] Client Full\n");
             return dwResult;
         }
@@ -165,17 +163,16 @@ DWORD IOCPServer::AccepterThread(){
         if(INVALID_SOCKET == newSocket)
             continue;
 
+        stClientInfo* pClientInfo = &mClientInfos[pClientIndex];
+
         if(0 == pClientInfo->OnConnect(mIOCPHandle, newSocket)){
             pClientInfo->Close(true);
             return dwResult;
         }
 
-        pClientInfo->mIndex = mClientCnt;
-        pClientInfo->setNickname(pClientInfo->mRecvBuf);
-
+        ++mClientCnt;
         OnConnect(pClientInfo->mIndex);
 
-        ++(mClientCnt);
     }
     printf("[알림] Accepter thread 종료\n");
     return dwResult;
@@ -213,13 +210,16 @@ DWORD IOCPServer::WorkerThread(){
 
         if(RECV == pOverlappedEx->m_eOperation){
             OnReceive(pClientInfo->GetIndex(), dwIoSize);
-
             pClientInfo->mRecvBuf[dwIoSize] = '\0';
-            printf("-> %s: \"%s\"\n", pClientInfo->mNickname, pClientInfo->mRecvBuf);
-
+            
             pClientInfo->BindRecv();
 
-            BroadCast(dwIoSize, pClientInfo);
+            printf("-> %s: \"%s\"\n", pClientInfo->mNickname, pClientInfo->mRecvBuf);
+            bool bProcessed = ActionProcess(dwIoSize, pClientInfo);
+
+            if(!bProcessed)
+                printf("Client Index(%d)에서 이상 액션 발견\n", pClientInfo->GetIndex());
+
         }
         else if(SEND == pOverlappedEx->m_eOperation){
             delete[] pOverlappedEx->m_wsaBuf.buf;

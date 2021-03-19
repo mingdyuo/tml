@@ -11,11 +11,6 @@ enum IOOperation
 	SEND
 };
 
-enum ClientAction{
-	ENTER = 10,
-	EXIT = 20,
-	CHAT = 30
-};
 
 //WSAOVERLAPPED구조체를 확장 시켜서 필요한 정보를 더 넣었다.
 struct stOverlappedEx
@@ -32,19 +27,21 @@ struct stClientInfo
 	SOCKET			m_socketClient;			
 	stOverlappedEx	m_stRecvOverlappedEx;	
 	stOverlappedEx	m_stSendOverlappedEx;	
-	bool			mbHasNick;
 
+	bool			mbHasNick;
 	char 			mNickname[32];
+	UINT16			mRoom;
+
 	char			mRecvBuf[MAX_SOCKBUF]; 
 	char			mSendBuf[MAX_SOCKBUF]; 
 
-	stClientInfo(): mIndex(0), m_socketClient(INVALID_SOCKET), mbHasNick(false)
+	stClientInfo(): mIndex(0), m_socketClient(INVALID_SOCKET), mbHasNick(false), mRoom(0)
 	{
 		ZeroMemory(&m_stRecvOverlappedEx, sizeof(stOverlappedEx));
 		ZeroMemory(&m_stSendOverlappedEx, sizeof(stOverlappedEx));
 	}
 
-	stClientInfo(UINT32 index): mIndex(mIndex), m_socketClient(INVALID_SOCKET), mbHasNick(false)
+	stClientInfo(UINT32 index): mIndex(index), m_socketClient(INVALID_SOCKET), mbHasNick(false), mRoom(0)
 	{
 		ZeroMemory(&m_stRecvOverlappedEx, sizeof(stOverlappedEx));
 		ZeroMemory(&m_stSendOverlappedEx, sizeof(stOverlappedEx));
@@ -59,8 +56,10 @@ public:
 		printf("[송신 완료] bytes : %d\n", dataSize_);
 	}
 
-	void setNickname(){
-		strcpy(mNickname, mRecvBuf);
+	void setNickname(int size){
+		for(int i=4;i<size;i++) mNickname[i - 4] = mRecvBuf[i];
+		mNickname[size - 4] = '\0';
+		mbHasNick = true;
 	}
 
 	void Initialize(){

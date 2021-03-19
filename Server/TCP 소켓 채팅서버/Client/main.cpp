@@ -1,5 +1,7 @@
 #include "IOCPClient.h"
+#include <conio.h>
 #define MAX_SOCKBUF 1024
+#define KEY_ESC 27
 
 void ErrorHandling(char *message);
 static const int SERVER_PORT = 9898;
@@ -19,11 +21,10 @@ int main()
     printf("[알림] quit을 입력시 클라이언트 종료합니다.\n");
     printf("인사말을 건네보세요 !! :");
 
-
     WaitForSingleObject (sender, INFINITE);
     WaitForSingleObject (recver, INFINITE);
     
-    iocpClient.close();
+    iocpClient.Close();
 
     printf("[알림] 클라이언트가 종료되었습니다. 아무키나 누르면 창을 종료합니다.\n");
     getchar();
