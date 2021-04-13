@@ -9,6 +9,7 @@
 - **2021** : Monthly Review, What I learned / want to learn about
   - [March](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/2021/3%EC%9B%94.md)
 - **C++**
+  - [[Book] Effective C++](https://github.com/mingdyuo/Let-me-be-a-BE-developer/blob/main/C%2B%2B/%5B%EB%8F%84%EC%84%9C%5D%20Effective%20C%2B%2B.md)
   - [New knowledge pieces in C++](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/C%2B%2B/C%2B%2B%20%EC%95%8C%EA%B2%8C%EB%90%9C%20%EA%B2%83%20%EC%A0%95%EB%A6%AC.md)
 - **Database**
   - [[Lecture] RDBMS Modeling](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Database/RDMBS%20%EB%AA%A8%EB%8D%B8%EB%A7%81%20%EA%B0%95%EC%9D%98.md)
