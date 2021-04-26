@@ -22,6 +22,7 @@
 - Operating system
   - [Thread programming](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Operating%20System/%5BC%2B%2B%5D%20%EC%8A%A4%EB%A0%88%EB%93%9C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D.md)
 - Server
+  - [[Lecture] 빅데이터 분산 컴퓨팅](https://github.com/mingdyuo/Let-me-be-a-BE-developer/blob/main/Server/%5B%EA%B0%95%EC%9D%98%5D%20%EB%B9%85%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%B6%84%EC%82%B0%EC%BB%B4%ED%93%A8%ED%8C%85.md)
   - [[Book] 객체지향의 사실과 오해](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Server/%5B%EB%8F%84%EC%84%9C%5D%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%EC%9D%98%20%EC%82%AC%EC%8B%A4%EA%B3%BC%20%EC%98%A4%ED%95%B4.md)
   - [[Book] Head first Design Pattern](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Server/%5B%EB%8F%84%EC%84%9C%5D%20%ED%97%A4%EB%93%9C%ED%8D%BC%EC%8A%A4%ED%8A%B8%20%EB%94%94%EC%9E%90%EC%9D%B8%ED%8C%A8%ED%84%B4.md)
   - [About Game Server](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Server/%EA%B2%8C%EC%9E%84%EC%84%9C%EB%B2%84%EA%B3%B5%EB%B6%80.md)
