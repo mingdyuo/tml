@@ -203,3 +203,40 @@
 - `noexcept` 키워드
 - `nullptr_t`는 `nullptr`의 자료형 이름인 것 같다. `int`, `void*`와도 모두 다르게 취급한다. 크기는 `sizeof(void*)`와 동일하게 4바이트이며, 0 값만 저장 가능하다.
 
+<br>
+
+### `std::map`의 탐색 결과는 `const_iterator`일까?
+
+![image](https://user-images.githubusercontent.com/41130448/116330967-a452e480-a809-11eb-860f-0e4fb9a8f05f.png)
+
+둘다 있다. 
+
+`const`함수에서 `std::map::find`를 호출하면 `const_iterator`를 반환하는 것 같고, `const`가 아닌 함수에서는 그냥 `iterator`를 반환하는 것 같다. 
+
+### `deltype` 키워드
+
+- `template`와 `auto`를 같이 사용할 시 컴파일러가 `template` 추론 후 반환형까지 추론하는 두 번의 과정을 거쳐야 한다. 이 때 써주는 키워드이다.
+
+  `C++11`에서 함수의 반환형이 `auto`이면 무조건 후행 반환 형식을 지정해야 한다.
+
+  ```c++
+  template<typename T>
+  auto Add(T a, T b)->deltype(a+b){
+  	return a + b;
+  }
+  
+  template<typename Container, typename Index>
+  auto Nth(Container container, Index index)->deltype(container[index]){
+      return container[index];
+  }
+  ```
+
+- `auto`는 Rvalue의 식으로 자료형이 결정나지만, `deltype`은 변수명으로 타입을 추론한다.
+
+- `deltype`도 참조와 포인터를 지정할 수 있다.
+
+<br>
+
+### `nullptr`
+
+- `C++`에서 추가된 **전역객체**이다, 키워드가 아니다.
