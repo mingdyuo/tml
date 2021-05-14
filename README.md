@@ -20,7 +20,8 @@
   - [Socket I/O model (2) Select, IOCP](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Network/%5BC%2B%2B%5D%20%EC%86%8C%EC%BC%93%20%EC%9E%85%EC%B6%9C%EB%A0%A5%20%EB%AA%A8%EB%8D%B8%20-%20Select%2C%20IOCP.md)
   - [[Lecture] Network Basics](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Network/%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC%20%EC%A0%95%EB%A6%AC.md)
   - [Socket Programming in C++](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Network/%EC%86%8C%EC%BC%93%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D%20%EA%B3%B5%EB%B6%80.md)
-  - Nagle Algorithm
+  - [Nagle Algorithm](https://github.com/mingdyuo/Let-me-be-a-BE-developer/blob/main/Network/Nagle%20%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98.md)
+  - Sliding Window
 - Operating system
   - [Thread programming](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Operating%20System/%5BC%2B%2B%5D%20%EC%8A%A4%EB%A0%88%EB%93%9C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D.md)
 - Seminar
