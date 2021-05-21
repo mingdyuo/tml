@@ -1,4 +1,4 @@
-# Let-me-be-a-BE-engineer
+# Today Mingdyuo Learned
 
 ### 📌 Purpose 1: Manage my plans through [github projects](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/projects) → Moved to [Here](https://github.com/users/mingdyuo/projects/1)
 
