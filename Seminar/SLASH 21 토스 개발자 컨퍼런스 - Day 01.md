@@ -346,14 +346,173 @@
 
 2. 데이터 센터 트래픽 조절
 
-   - 3:24
+   - 토스는 데이터 센터 2개를 운영하며 트래픽을 돌릴 수 있다. 시스템을 안정적으로 운영하기 위함. 
+
+     Route53 → (DC 분기) → L7 → L7 → K8S
+
+     <img src="https://user-images.githubusercontent.com/41130448/120100937-5f123180-c17e-11eb-9906-310a506c31ec.png" alt="image" style="zoom:67%;" />
+
+   - 평소에는 50:50으로 운영하나, 한쪽이 100%가 되는 트래픽을 옮기는 작업을 자주 한다. 
+
+     따라서 devops 팀에서 자동화도 많이 해두었다. 
+
+   - 트래픽을 한쪽으로 옮기는 이유
+
+     1. 장애가 났을 때 반대편 데이터 센터로 트래픽을 옮겨 장애 시간을 줄인다. 
+
+     2. 새로운 시스템 도입이나 쿠버네티스 설정 변경 시 테스트 범위와 예상 밖의 문제가 발생할 수 있으므로 트래픽을 한쪽으로 옮겨놓음. 
+
+        새로운 설정으로 1%의 트래픽을 받은 후 문제가 없다면 점진적으로 늘린다. 문제가 발생하면 바로 트래픽을 제거한다. 장애를 겪는 고객 수를 최소화하는 것이 목적 
+
+        서비스 카나리 배포를 데이터 센터에 적용했다고 생각할 수 있다. 
+
+   - 트래픽 방향은 Route53과 L7에서 전환할 수 있다. 
+
+     1. L7에서 트래픽을 돌릴 경우 모든 트래픽이 곧바로 옮겨지는 장점이 있다. 따라서 대부분에서는 L7에서 돌린다. 
+     2. Route53의 경우에는 변경 사항이 다른 라우터에 전파가 된 후에 반영되므로 시간이 오래 걸리는 단점이 있다. (?? 이해가 잘 안된다)
 
 3. K8S + Istio
 
-4. api-gateway / webflux
+   - 19년도 중순에 DC/OS에서 K8S로 마이그레이션하기로 함
 
-5. monitoring
+   - Container orchestration에서 가장 중요한 것
 
-6. kafka
+     1. Service discovery
 
-7. redis
+        DC/OS에서 카나리 배포로 사용하던 vamp는 이 기능이 비효율적이고 한계가 존재했음. 그래서 마이그레이션을 결정함.
+
+     2. Container lifecycle management
+
+   - DC2에서 K8S를 도입, DC1에서는 DC/OS를 동시에 운영했다. 그리고 DC1의 DC/OS 일부 노드를 제거하고 쿠버네티스를 설치. 혹시 모를 문제 발생 시 롤백을 하기 위해서 조금씩 작업함. 
+
+   - DC1, DC2 모두에서 쿠버네티스를 운영해보고 안정적으로 운영할 수 있다고 판단한 후 DC1, DC2에서 모두 K8S를 운영중
+
+   ![image](https://user-images.githubusercontent.com/41130448/120101217-fa57d680-c17f-11eb-9874-01c1c21b5254.png)
+
+   - 쿠버네티스 도입 시 service mesh의 장점이 크다고 판단된 Istio도 함께 도입함
+
+     1. monolithic에서 msa로 넘어가게 되면서 하나의 서비스는 여러 서버들의 호출로 구성되었다.
+
+        그러면서 서버들 간에 network 처리가 필요하게 되었다.
+
+        circuit breaker, retry, fallback 등을 애플리케이션에서 처리했다. 
+
+     2. Istio를 도입하면 istio-proxy가 sidecar 형태로 붙어서 모든 네트워크를 proxy하게 된다. 
+
+        이 과정에서 애플리케이션의 일을 대신할 수 있기 때문에 애플리케이션의 언어와 무관하게 개별 어플리케이션에서 처리하는 것이 아니라 infra 차원에서 한번에 해결할 수 있다. 
+
+     3. Client side load balancing
+
+        msa는 외부에서 내부로 들어오는 요청보다 내부 서비스 간의 요청이 많다. 
+
+        이 경우 내부 요청을 중앙 집중 형태로 처리한다면 장애에 취약한 부분이 생기고, 부하도 많이 받는다. 
+
+        Istio에서는 이런 내부 요청이 중앙 집중 형태가 아닌 client side에서 처리할 수 있다. 
+
+     4. dc/os보다는 k8s가 더 넓은 생태계를 가지고 있고, 더 큰 규모의 서비스에서 검증되기도 했다. 
+
+   - Istio 도입 후 느낀 점
+
+     1. Observability가 높아졌다.
+
+        - Istio는 서비스에 sidecar로 붙어서 실행되고 iptable을 통해 모든 트래픽을 제어한다. 이렇게 제어된 트래픽은 모두 istio-proxy를 통해서 나가게 되고 또 istio-proxy를 통해서 받게 된다. 
+
+        - Istio-proxy는 이런 envoy proxy를 Istio에서 래핑한 것이다. 
+
+          envoy는 탄생 배경 중 하나가 'proxy가 어떻게 동작하는지 명확히 보여주자'이므로 많은 통계를 가지고 있다. 예를 들면 connection pool 동작 방식, 어디에서 connection이 끊겼는지 등을 통게로 확인할 수 있다. 이런 통계를 보내는 쪽과 받는 쪽을 합쳐서 보면 문제의 원인이 되는 곳을 파악하기가 쉽다. 
+
+          기존에 tcpdump로 네트워크 문제를 해결할 때 보내는 쪽과 받는 쪽 모두 dump를 떠서 확인했던 것을 대신해주는 개념이다.
+
+        ![image](https://user-images.githubusercontent.com/41130448/120101575-a1893d80-c181-11eb-9b94-f19ae1deb96e.png)
+
+        2. Application Concern을 Infra concern으로 변경하기 어려운 부분도 존재한다. 
+
+           - Istio를 사용하면서 infra 쪽으로 네트워크 처리를 넘겨보려고 했지만 circuit breaker는 host 별로 설정을 해야 하므로 세부적인 설정이 어려웠다. 
+
+             예를 들면 retry도 api의 트랜잭션 처리 방식과 응답값에 따라 시도 여부가 달라진다. 
+
+             세부 설정을 하기 어려우므로 이런 부분은 어플리케이션 단에서 처리한다. 
+
+           - 대신 mTIs 설정을 통해 A 서비스는 B를 호출하고, C는 B 호출을 할 수 없도록 서비스별로 권한을 다르게 적용시킬 수 있다.
+
+             혹은 envoy filter를 작성하여 애플리케이션을 변경하지 않고 dynamic하게 네트워크 기능을 추가할 수 있다.
+
+             토스는 envoy filter로 헤더 처리와 접근 제어를 하고 있다.
+
+           ![image](https://user-images.githubusercontent.com/41130448/120101687-3b50ea80-c182-11eb-8eca-5868aaf35ec7.png)
+
+   - Istio 장점
+
+     1. 1% 카나리 배포 기능
+
+        - 인스턴스 단위로 카나리를 하면 트래픽을 세밀하게 조절하기 어렵다. 
+
+          예를 들어 10개 인스턴스에서 1개만 카나리를 나가면 10% 카나리가 된다. 1% 카나리 배포를 하려면 100개의 인스턴스가 필요하다. 
+
+        - Istio는 router의 weight으로 카나리를 할 수 있으므로 인스턴스 개수와 무관하게 1% 카나리 배포가 가능하다. 
+
+        ![image-20210530200712375](C:\Users\pc\AppData\Roaming\Typora\typora-user-images\image-20210530200712375.png)
+
+     2. failure injection test, squeeze test를 할 수 있다.
+
+        - failure injection test
+
+          특정 조건에 맞는 요청의 경우 실패나 응답을 늦게 하도록 만들어 서비스에서 실패에 대한 처리가 제대로 되어 있는지 확인할 수 있다. 
+
+        - squeeze test
+
+          하나의 인스턴스에 요청 비율을 높혀서 부하를 약간 주는 테스트
+
+          라이브에서 진행되므로 서비스의 최대 성능을 알아내기보다는 어느 정도 요청부터 서비스가 부하를 느끼는지 알아보고 지표를 비교하며 새로운 배포로 인해서 성능 하락이 있는지 확인할 수 있다. 
+
+4. api-gateway
+
+   - 도입 배경
+
+     원래 클라이언트의 인증과 암호화/복호화를 담당하는 서비스가 존재했다. 그러나 점점 트래픽이 많아지면서 성능을 높일 필요성이 대두되었다. 
+
+     따라서 신규 gateway 도입을 검토했고, zuul, kong, spring cloud gateway 와 같은 후보가 있었으며 이 중 spring cloud gateway를 선택했다. 
+
+   - spring cloud gateway를 선택한 이유
+
+     WebFlux 도입을 하면서 reactor에 대한 운영 자신감이 생김
+
+     성능이 검증되어 있음
+
+   - 추가 설명
+
+     1. api-gateway는 트래픽을 여러 필터로 처리하는데 토스에서는 custom filter를 만들어서 [기존 인증/oauth2/암복호화]를 구현함
+
+     2. gateway에 라우팅은 static이나 dynamic으로 추가할 수 있다. 
+
+        그러나 dynamic의 경우에는 routing 검증 프로세스가 아직 확립되지 않아서 대부분 static으로 추가한다. 
+
+     3. spring의 내부 코드가 reactor이지만 유지보수를 편리하게 하기 위해서 코루틴을 사용하고 있다. 
+
+   ![image](https://user-images.githubusercontent.com/41130448/120101968-d5fdf900-c183-11eb-840e-a4d2c30bf68a.png)
+
+   - 처음에는 하나의 gateway로 서비스를 했는데, gateway에 요청을 보내는 서비스들이 다양해졌다. 클라이언트에 맞는 처리를 해줘야 하면서 gateway가 무거워지기 시작했다.
+
+     따라서 각 클라이언트에 대응하고 gateway 로직을 분리하기 위해서 새로운 gateway를 추가했다. 
+
+     Netflix에서는 gateway를 개발하면서 어느 팀이 gateway를 관리할지, 공통 로직을 어떻게 처리할지 고민을 많이 했다고 한다. 
+
+     현재 토스는 각 팀의 PR을 받아 platform 팀에서 승인하는 구조로 관리하고 있다. 공통 로직의 경우에는 모듈화 해서 처리하고 있다. 
+
+     ![image](https://user-images.githubusercontent.com/41130448/120102083-5c1a3f80-c184-11eb-9d7d-b17230a7b5e3.png)
+
+5. WebFlux
+
+   - 토스의 많은 서비스들은 mvc로 되어 있다. 그러나 홈탭이나 내 소비와 같이 여러 데이터를 모아서 보여주는 I/O가 많은 프로젝트에서는 WebFlux를 이용하고 있다. 
+   - 최근에서는 스프링에서 코틀린 dsl을 잘 지원하고 R2DBC를 사용하면서 많은 프로젝트가 WebFlux 로 시작하고 있다. 
+   - 초기에는 WebFlux를 reactor로 개발했다. reactor를 사용하면 지금까지 알던 direct style로 control flow를 짜는 것이 아니라 reactor가 제공하는 operator를 사용해야 한다. reactor에서 제공하는 가이드를 통해 각 경우에 사용하는 operator를 따로 살펴보고 테스트를 통해 의도된 동작인지 확인해야 한다. 또한 비즈니스 로직까지 추가해야 한다. 이 때문에 조직 이동이나 신규 입사시에 러닝커브가 크기 때문에 코루틴을 도입했다. 코루틴을 사용하면 기존처럼 direct style로 개발을 할 수 있다. 
+
+6. monitoring
+
+   - 오픈 소스를 많이 사용하여 모니터링한다. 
+   - 13:52
+   - https://www.youtube.com/watch?v=YBXFRSAXScs&t=204s
+
+7. kafka
+
+8. redis
