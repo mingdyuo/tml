@@ -49,3 +49,6 @@
   - [21.01.30 OS](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Tech%20interview%20practice/2021.01.30%20%EB%A9%B4%EC%A0%91%20%EC%8A%A4%ED%84%B0%EB%94%94(OS).md)
   - [21.02.06 Web](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Tech%20interview%20practice/2021.02.06%20%EB%A9%B4%EC%A0%91%20%EC%8A%A4%ED%84%B0%EB%94%94(%EC%9B%B9).md)
 
+
+
+
