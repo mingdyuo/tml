@@ -33,8 +33,12 @@
   - [Thread programming](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Operating%20System/%5BC%2B%2B%5D%20%EC%8A%A4%EB%A0%88%EB%93%9C%20%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D.md)
 - **Seminar**
   - [SLASH 21 DAY 01 토스 서비스를 구성하는 서버 기술](https://github.com/mingdyuo/tml/blob/main/Seminar/SLASH%2021%20DAY%2001%20-%20%ED%86%A0%EC%8A%A4%20%EC%84%9C%EB%B9%84%EC%8A%A4%EB%A5%BC%20%EA%B5%AC%EC%84%B1%ED%95%98%EB%8A%94%20%EC%84%9C%EB%B2%84%20%EA%B8%B0%EC%88%A0.md)
+  
   - [SLASH 21 DAY 01 토스의 서버 인프라 모니터링](https://github.com/mingdyuo/tml/blob/main/Seminar/SLASH%2021%20DAY%2001%20-%20%ED%86%A0%EC%8A%A4%EC%9D%98%20%EC%84%9C%EB%B2%84%20%EC%9D%B8%ED%94%84%EB%9D%BC%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81.md)
+  
+  - ###### [SLASH 21 DAY 01 - 테스트 커버리지 100%](https://github.com/mingdyuo/tml/blob/main/Seminar/SLASH%2021%20DAY%2001%20-%20%ED%85%8C%EC%8A%A4%ED%8A%B8%20%EC%BB%A4%EB%B2%84%EB%A6%AC%EC%A7%80%20100%25.md)
 - **Server**
+  
   - [[Book] 객체지향의 사실과 오해](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Server/%5B%EB%8F%84%EC%84%9C%5D%20%EA%B0%9D%EC%B2%B4%EC%A7%80%ED%96%A5%EC%9D%98%20%EC%82%AC%EC%8B%A4%EA%B3%BC%20%EC%98%A4%ED%95%B4.md)
   - [[Book] Head first Design Pattern](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Server/%5B%EB%8F%84%EC%84%9C%5D%20%ED%97%A4%EB%93%9C%ED%8D%BC%EC%8A%A4%ED%8A%B8%20%EB%94%94%EC%9E%90%EC%9D%B8%ED%8C%A8%ED%84%B4.md)
   - [About Game Server](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Server/%EA%B2%8C%EC%9E%84%EC%84%9C%EB%B2%84%EA%B3%B5%EB%B6%80.md)
