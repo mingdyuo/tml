@@ -12,16 +12,16 @@
   - [April](https://github.com/mingdyuo/Let-me-be-a-BE-developer/blob/main/2021/4%EC%9B%94.md)
   - [May](https://github.com/mingdyuo/tml/blob/main/2021/5%EC%9B%94.md)
   - [June](https://github.com/mingdyuo/tml/blob/main/2021/6%EC%9B%94.md)
-  - September
+- 2022 : Monthly Review
+  - January
 - **C++**
   - [[Book] Effective C++](https://github.com/mingdyuo/Let-me-be-a-BE-developer/blob/main/C%2B%2B/%5B%EB%8F%84%EC%84%9C%5D%20Effective%20C%2B%2B.md)
   - [New knowledge pieces in C++ - 1](https://github.com/mingdyuo/tml/blob/main/C%2B%2B/C%2B%2B%20%ED%86%A0%EB%A7%89%20%EC%A0%95%EB%A6%AC%20-%201.md)
   - [New knowledge pieces in C++ - 2](https://github.com/mingdyuo/tml/blob/main/C%2B%2B/C%2B%2B%20%ED%86%A0%EB%A7%89%20%EC%A0%95%EB%A6%AC%20-%202.md)
 - **Go**
-  - [Book] Discovery Go
-  - [Book] Concurrency in Go
-  - Study Golang
-  
+  - [[Book] Discovery Go](https://github.com/mingdyuo/tml/blob/main/Go/%5B%EB%8F%84%EC%84%9C%5D%20Discovery%20Go.md)
+  - [[Book] Concurrency in Go](https://github.com/mingdyuo/tml/blob/main/Go/%5B%EB%8F%84%EC%84%9C%5D%20Concurrency%20in%20Go.md)
+  - [Study Golang](https://github.com/mingdyuo/tml/blob/main/Go/Study%20Golang.md)
 - **Database**
   - [[Lecture] RDBMS Modeling](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Database/RDMBS%20%EB%AA%A8%EB%8D%B8%EB%A7%81%20%EA%B0%95%EC%9D%98.md)
   - [[Lecture] Database](https://github.com/mingdyuo/tml/blob/main/Database/%5B%EA%B0%95%EC%9D%98%5D%20%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4.md)
