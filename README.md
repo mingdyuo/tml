@@ -13,7 +13,7 @@
   - [May](https://github.com/mingdyuo/tml/blob/main/2021/5%EC%9B%94.md)
   - [June](https://github.com/mingdyuo/tml/blob/main/2021/6%EC%9B%94.md)
 - 2022 : Monthly Review
-  - January
+  - [January](https://github.com/mingdyuo/tml/blob/main/2022/1%EC%9B%94.md)
 - **C++**
   - [[Book] Effective C++](https://github.com/mingdyuo/Let-me-be-a-BE-developer/blob/main/C%2B%2B/%5B%EB%8F%84%EC%84%9C%5D%20Effective%20C%2B%2B.md)
   - [New knowledge pieces in C++ - 1](https://github.com/mingdyuo/tml/blob/main/C%2B%2B/C%2B%2B%20%ED%86%A0%EB%A7%89%20%EC%A0%95%EB%A6%AC%20-%201.md)
@@ -50,6 +50,10 @@
   - [About Distributed Server](https://github.com/mingdyuo/tml/blob/main/Server/%EB%B6%84%EC%82%B0%EC%84%9C%EB%B2%84%EC%97%90%20%EB%8C%80%ED%95%9C%20%EA%B3%B5%EB%B6%80.md)
   - [Lecture] Linux
   - [[Book] 대규모 서비스를 지탱하는 기술](https://github.com/mingdyuo/tml/blob/main/Server/%5B%EB%8F%84%EC%84%9C%5D%20%EB%8C%80%EA%B7%9C%EB%AA%A8%20%EC%84%9C%EB%B9%84%EC%8A%A4%EB%A5%BC%20%EC%A7%80%ED%83%B1%ED%95%98%EB%8A%94%20%EA%B8%B0%EC%88%A0.md)
+- **Infra**
+  
+  - [Lecture] 따라하면서 배우는 쿠버네티스
+  
 - **Spring Framework**
   - [[Lecture] Springboot basics](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Spring/%5B%EA%B0%95%EC%9D%98%5D%20%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8%20%EC%9E%85%EB%AC%B8%20%EA%B0%95%EC%9D%98.md)
   - [[Book] 스프링 부트와 AWS로 혼자 구현하는 웹 서비스](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Spring/%5B%EB%8F%84%EC%84%9C%5D%20%EC%8A%A4%ED%94%84%EB%A7%81%20%EB%B6%80%ED%8A%B8%EC%99%80%20AWS%EB%A1%9C%20%ED%98%BC%EC%9E%90%20%EA%B5%AC%ED%98%84%ED%95%98%EB%8A%94%20%EC%9B%B9%20%EC%84%9C%EB%B9%84%EC%8A%A4.md)
@@ -58,7 +62,7 @@
   - [Build and Deploy tools in Spring](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Spring/%5B%ED%95%99%EC%8A%B5%5D%20%EC%8A%A4%ED%94%84%EB%A7%81%20%EB%B6%80%ED%8A%B8%20%EB%B9%8C%EB%93%9C%20%ED%88%B4%20%EB%B0%8F%20%EB%B0%B0%ED%8F%AC%20%EB%B0%A9%EC%8B%9D%20(gradle%2C%20maven%2C%20jar%2C%20war).md)
   - [Spring and JPA](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Spring/%5B%ED%95%99%EC%8A%B5%5D%20%EC%8A%A4%ED%94%84%EB%A7%81%EA%B3%BC%20JPA.md)
   - [Notes about Spring](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Spring/%5B%ED%95%99%EC%8A%B5%5D%20%EC%8A%A4%ED%94%84%EB%A7%81%EC%9D%84%20%EA%B3%B5%EB%B6%80%ED%95%98%EC%9E%90.md)
-- Tech interview practice
+- **Tech interview practice**
   - [21.01.23 DB](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Tech%20interview%20practice/2021.01.23%20%EB%A9%B4%EC%A0%91%20%EC%8A%A4%ED%84%B0%EB%94%94(DB).md)
   - [21.01.30 OS](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Tech%20interview%20practice/2021.01.30%20%EB%A9%B4%EC%A0%91%20%EC%8A%A4%ED%84%B0%EB%94%94(OS).md)
   - [21.02.06 Web](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Tech%20interview%20practice/2021.02.06%20%EB%A9%B4%EC%A0%91%20%EC%8A%A4%ED%84%B0%EB%94%94(%EC%9B%B9).md)
