@@ -48,13 +48,125 @@
 
 #### 원자성
 
+- 원자적이다 
+  - 동작하는 ***컨텍스트*** 내에서 나누어지거나 중단되지 않는다.
+    - 어떤 컨텍스트에서는 원자적이어도, 다른 컨텍스트에서는 원자적이지 않을 수 있음
+    - **연산이 정의된 스코프**가 중요하다.
+    - e.g.) 사용자 프로세스 컨텍스트에서 원자적 / 운영체제의 컨텍스트에서는 비원자적
+    - e.g.) 운영체제의 프로세스 컨텍스트에서 원자적 / 기기의 컨텍스트에서는 비원자적
+    - e.g.) 기기의 프로세스 컨텍스트에서 원자적 / 애플리케이션의 컨텍스트에서는 비원자적
+- 원자적인 연산을 조합한다고 더 큰 원자적 연산이 생성되는 것은 아니다. 
+  - 어떤 컨텍스트에서 원자성을 얻고자 하느냐에 달려 있다.
+- 원자성은 왜 중요한가?
+  - 무언가 원자적이라면 동시에 실행되는 컨텍스트 내에서는 안전하다는 것을 의미
+  - 논리적으로 올바른 프로그램 작성시 필요하다
+  - 동시성 프로그램들을 최적화 하기 위해 사용된다.
+- 대부분의 구문은 원자적 요소가 아니다. 여러 기법을 통해서 원자성을 강제할 수 있는데, 그 강제되는 영역을 결정하고 세분화 하는 것이 중요한 기술이다.
+
 #### 메모리 접근 동기화
+
+- 임계 영역
+  - 프로그램에서 공유 리소스에 독점적으로 접근해야 하는 영역
+- 메모리 접근 동기화는 임계 영역을 보호하는 방법 중에 하나이다.
+  - Go에서 권장하지는 않음
+  - `sync.Mutex` 를 사용하여 락을 거는 방식
+  - 개발자들은 해당 리소스에 대한 접근 규칙을 따라야만 한다. 
+  - 메모리에 대한 접근 동기화는 성능에 영향을 미칠 수 있음
+- 사용 시 고려해야 하는 것
+  - 임계 영역에 반복적으로 들어갔다가 나오는가?
+  - 임계 영역은 어느 정도 크기여야 하는가?
 
 #### 데드락, 라이브락, 기아 상태
 
+- 또다른 발생할 수 있는 문제들
+  - 잘 처리하지 않으면 프로그램이 아예 작동을 멈추는 상태를 유지할 수 있음
+
 #### 데드락
 
+- 데드락에 빠지면 외부 개입 없이 프로그램 복구할 수 없다.
+- Go 런타임이 어느 정도 탐지할 수 있지만 다 방지할 수는 없음
+- 데드락의 발생 조건 (코프먼 조건)
+  - 상호 배제 (mutual exclusion)
+    - 리소스 배타적으로 가진다
+  - 대기 조건 (wait for condition)
+    - 누가 리소스 쓰고 있으면 다른애는 기다려야 함
+  - 비선점 (No preemption)
+    - 누가 리소스 쓰고 있으면 쓰던애가 놓아줘야 다른애가 쓸 수 있음. 못뺏는다
+  - 순환 대기 (Circular Wait)
+    - 서로 쓰고 있는 리소스 놓아주는것 기다리는 상황이어야 함
+- 위 조건을 하나라도 충족하지 않으면 데드락 발생을 막을 수 있다.
+  - 하지만 예방하기 쉽지 않다
+
 #### 라이브락
+
+- 이거 이해 잘 안됨
+- 프로그램들이 활동적으로 동시에 연산을 수행하고 있지만, 이 연산들이 실제로 프로그램의 상태를 진행시키는 데 아무런 영향을 주지 못하는 의미 없는 연산 상태인 경우
+  - 복도에서 두명이 반대 방향으로 걸어가는 상황에서 길을 비켜주기 위해 서로 방향을 이동하지만 계속 겹쳐서 무한히 방향 이동만 계속하는 경우
+
+```go
+cadence := sync.NewCond(&sync.Mutex{})
+go func(){
+  for range time Tick(1*time.Millisecond){
+    cadence.Broadcast() // 대기하고 있는 고루틴을 전부 깨움
+  }
+}()
+
+takeStep := func(){
+  cadence.L.Lock()
+  cadence.Wait() // 고루틴 실행을 멈추고 대기
+  cadence.L.Unlock()
+}
+
+tryDir := func(dirName string, dir *int32, out *bytes.Buffer) bool{
+  fmt.Fprintf(out, " %v", dirName)
+  atomic.AddInt32(dir, 1) // 여기가 이해 안된다. atomic 썻으면 그냥 int 더해주는게 아닌가??
+  takeStep()
+  if atomic.LoadInt32(dir) == 1{
+    fmt.Fprintf(out, ". Success!")
+    return true
+  }
+  takeStep()
+  atomic.AddInt32(dir, -1)
+  return false
+}
+
+var left, right int32
+tryLeft := func(out *bytes.Buffer) bool {return tryDir("left", &left, out)}
+tryRight := func(out *bytes.Buffer) bool {return tryDir("right", &right, out)}
+```
+
+- 조건 변수 `sync.Cond`
+  - 대기하고 있는 객체 하나만 깨우거나 여러 개를 동시에 깨울 때 사용한다.
+
+```go
+walk := func(walking *sync.WaitGroup, name string){
+  var out bytes.Buffer
+  defer func() {fmt.Println(out.String())}()
+  defer walking.Done()
+  fmt.Fprintf(&out, "%v is trying to scoot:", name)
+  for i := 0; i<5 ; i++{
+    if tryLeft(&out) || tryRight(&out){ // 두명(앨리스 바바라)이 각각 왼쪽 오른쪽으로 이동 시도
+      return
+    }
+  }
+  fmt.Fprintf(&out, "\n%v tosses her hands up in exasperation!", name)
+}
+
+var peopleInHallway sync.WaitGroup
+peopleInHallway.Add(2)
+go walk(&peopleInHallway, "Alice")
+go walk(&peopleInHallway, "Barbara")
+peopleInHallway.Wait()
+```
+
+- 서로 길을 비켜주기 때문에 라이브락 발생
+- `atomic.AddInt32(dir, 1)`에서 왜 1이 안더해짐????????
+
+#### 기아 상태
+
+- 누가 리소스 다 처묵고 있어서 다른 애들이 작업 못함
+- 임계 상태를 벗어나도 불필요하게 공유 락을 가지고 있으면 기아 상태 일으킬 수 있음
+  - 
 
 #### 동시실행 안전성 판단
 
@@ -75,4 +187,6 @@ go func (){
 wg.Wait()
 fmt.Println("All goroutines complete")
 ```
+
+
 
