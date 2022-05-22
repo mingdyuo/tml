@@ -62,6 +62,11 @@
   - [Build and Deploy tools in Spring](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Spring/%5B%ED%95%99%EC%8A%B5%5D%20%EC%8A%A4%ED%94%84%EB%A7%81%20%EB%B6%80%ED%8A%B8%20%EB%B9%8C%EB%93%9C%20%ED%88%B4%20%EB%B0%8F%20%EB%B0%B0%ED%8F%AC%20%EB%B0%A9%EC%8B%9D%20(gradle%2C%20maven%2C%20jar%2C%20war).md)
   - [Spring and JPA](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Spring/%5B%ED%95%99%EC%8A%B5%5D%20%EC%8A%A4%ED%94%84%EB%A7%81%EA%B3%BC%20JPA.md)
   - [Notes about Spring](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Spring/%5B%ED%95%99%EC%8A%B5%5D%20%EC%8A%A4%ED%94%84%EB%A7%81%EC%9D%84%20%EA%B3%B5%EB%B6%80%ED%95%98%EC%9E%90.md)
+- **ETC**
+  
+  - 머신러닝 부트캠프
+  - Topics
+  
 - **Tech interview practice**
   - [21.01.23 DB](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Tech%20interview%20practice/2021.01.23%20%EB%A9%B4%EC%A0%91%20%EC%8A%A4%ED%84%B0%EB%94%94(DB).md)
   - [21.01.30 OS](https://github.com/mingdyuo/Let-me-be-a-BE-engineer/blob/main/Tech%20interview%20practice/2021.01.30%20%EB%A9%B4%EC%A0%91%20%EC%8A%A4%ED%84%B0%EB%94%94(OS).md)
